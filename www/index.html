@@ -166,6 +166,7 @@ const I = {
   orders:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20M7 8v3M12 8v3M17 8v3M7 4h.01M12 4h.01M17 4h.01"/></svg>',
   money:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg>',
   report:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15v2M11 11v6M15 7v10M19 12v5"/></svg>',
+  bell:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>',
   menu:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>',
   users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0"/><path d="M16 4a4 4 0 0 1 0 8M22 21a7 7 0 0 0-4-6.3"/></svg>',
   gear:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
@@ -190,13 +191,15 @@ const DEFAULT_CONFIG = {
   tplConfirm:'Namaste {name} 🙏\nThank you for ordering from *{shop}*!\n\n🧾 Order No: {order}\n🎂 Items: {items}\n📅 {type}: {when}\n💰 Total: {cur} {total} | Paid: {cur} {paid} | Balance: {cur} {balance}\n\nWe will message you as soon as it is ready.',
   tplReady:'Namaste {name} 🙏\n\nGood news! Your order *{order}* from *{shop}* is READY 🎂✨\n\nItems: {items}\n{balance_line}\n📅 {type}: {when}\n\nThank you for choosing {shop}! 📞 {shopphone}',
   tplThanks:'Thank you {name} for choosing *{shop}*! 😊\nWe hope everyone enjoyed the {items}.\nWe would love your feedback — and see you again soon! 🎂',
-  tplReminder:'Namaste {name} 🙏\nGentle reminder from *{shop}*: balance of {cur} {balance} is pending for order {order}. Thank you!'
+  tplReminder:'Namaste {name} 🙏\nGentle reminder from *{shop}*: balance of {cur} {balance} is pending for order {order}. Thank you!',
+  tplBirthday:'Namaste {name} 🙏\n\n🎂🎉 *Happy Birthday {name}!* 🎉🎂\nWishing you a day full of joy and sweetness from all of us at *{shop}*.\n\nCelebrating with a special cake? Order from us — remember *{shop}*! 🍰\n📞 {shopphone}',
+  tplAnniv:'Namaste {name} 🙏\n\nIt has been a year since you celebrated with *{shop}* ({items}) 🎂\nHave a special occasion coming up? Order your cake with us again — remember *{shop}*! 🍰\n\n📞 {shopphone}\n📍 {address}'
 };
 
 /* ============ State ============ */
 const S = {
-  view:'dashboard', orders:[], txns:[], products:[], config:{...DEFAULT_CONFIG},
-  mode:'loading', loaded:{orders:false,txns:false,products:false,config:false},
+  view:'dashboard', orders:[], txns:[], products:[], customers:[], reminders:[], config:{...DEFAULT_CONFIG},
+  mode:'loading', loaded:{orders:false,txns:false,products:false,customers:false,reminders:false,config:false},
   orderTab:'Active', orderSearch:'', txnFilter:'all', txnSearch:'',
   rep:{range:'month', from:'', to:''}, slow:false, readOnly:false
 };
@@ -254,10 +257,10 @@ function toast(msg){
 
 /* ============ Storage layer (online db, fallback local) ============ */
 const LS_KEY = 'sunrise_bakery_local_v1';
-function lsSave(){ try{ localStorage.setItem(LS_KEY, JSON.stringify({orders:S.orders,txns:S.txns,products:S.products,config:S.config})); }catch(e){} }
-function lsLoad(){ try{ const j = JSON.parse(localStorage.getItem(LS_KEY)||'null'); if(j){ S.orders=j.orders||[]; S.txns=j.txns||[]; S.products=j.products||[]; S.config={...DEFAULT_CONFIG,...(j.config||{})}; } }catch(e){} }
+function lsSave(){ try{ localStorage.setItem(LS_KEY, JSON.stringify({orders:S.orders,txns:S.txns,products:S.products,customers:S.customers,reminders:S.reminders,config:S.config})); }catch(e){} }
+function lsLoad(){ try{ const j = JSON.parse(localStorage.getItem(LS_KEY)||'null'); if(j){ S.orders=j.orders||[]; S.txns=j.txns||[]; S.products=j.products||[]; S.customers=j.customers||[]; S.reminders=j.reminders||[]; S.config={...DEFAULT_CONFIG,...(j.config||{})}; } }catch(e){} }
 
-const COLS = {orders:'orders', txns:'txns', products:'products'};
+const COLS = {orders:'orders', txns:'txns', products:'products', customers:'customers', reminders:'reminders'};
 async function put(col, obj){
   obj.updatedAt = new Date().toISOString();
   if(S.mode === 'online'){
@@ -300,7 +303,8 @@ function loginScreen(auth){
   });
 }
 async function getCloud(){
-  const cfg = window.FIREBASE_CONFIG;
+  let cfg = window.FIREBASE_CONFIG;
+  try{ const l = JSON.parse(localStorage.getItem('sb_firebase_cfg')||'null'); if(l && l.apiKey) cfg = l; }catch(e){}
   if(!cfg || !cfg.apiKey || String(cfg.apiKey).startsWith('PASTE')) return null;
   const v = '10.12.2', base = 'https://www.gstatic.com/firebasejs/'+v+'/';
   await loadScript(base+'firebase-app-compat.js'); await loadScript(base+'firebase-auth-compat.js'); await loadScript(base+'firebase-firestore-compat.js');
@@ -324,7 +328,7 @@ async function init(){
   S.mode = 'online';
   const done = (k, fromCache) => { if(!fromCache) S.loaded[k] = true; if(Object.values(S.loaded).every(Boolean)){ ready = true; S.slow = false; clearTimeout(slowT); } };
   const onErr = e => { ready = true; clearTimeout(slowT); if(e && (e.code==='revoked' || e.code==='permission-denied')){ S.mode='revoked'; } toast('Connection problem: some data may be out of date.'); render(); };
-  for(const k of ['orders','txns','products']){
+  for(const k of ['orders','txns','products','customers','reminders']){
     db.collection(COLS[k]).onSnapshot(snap => {
       S[k] = snap.docs.filter(d=>d.exists).map(d => ({...d.data(), id:d.id}));
       done(k, snap.metadata.fromCache); render();
@@ -338,7 +342,7 @@ async function init(){
 
 /* ============ Navigation ============ */
 const VIEWS = [
-  ['dashboard','Dashboard',I.home],['orders','Orders',I.orders],['money','Income & Expense',I.money],
+  ['dashboard','Dashboard',I.home],['orders','Orders',I.orders],['reminders','Reminders',I.bell],['money','Income & Expense',I.money],
   ['reports','Reports',I.report],['products','Menu & Prices',I.menu],['customers','Customers',I.users],
   ['backup','Backup & Restore',I.backup],['settings','Settings',I.gear]
 ];
@@ -348,10 +352,10 @@ function go(v){ S.view = v; closeModal(); render(); window.scrollTo(0,0); try{ h
 function renderNav(){
   const st = S.mode==='online' ? '<span class="dot online"></span>Online · synced' : S.mode==='local' ? '<span class="dot local"></span>This phone only' : S.mode==='revoked' ? '<span class="dot"></span>Access removed' : '<span class="dot"></span>Connecting…';
   $('#side').innerHTML = '<div class="logo">'+LOGO+'<div><b>'+esc(S.config.shopName||'Sunrise Bakery')+'</b><small>Bakery Manager</small></div></div>' +
-    VIEWS.map(([k,l,ic])=>'<button class="nav'+(S.view===k?' on':'')+'" data-go="'+k+'">'+ic+l+'</button>').join('') +
+    VIEWS.map(([k,l,ic])=>'<button class="nav'+(S.view===k?' on':'')+'" data-go="'+k+'">'+ic+l+(k==='reminders'&&dueReminders().length?'<span class="pill st-Pending" style="margin-left:auto">'+dueReminders().length+'</span>':'')+'</button>').join('') +
     '<div class="foot">'+st+'</div>';
   const mv = {dashboard:['Home',I.home],orders:['Orders',I.orders],money:['Money',I.money],reports:['Reports',I.report],more:['More',I.menu]};
-  const inMore = ['products','customers','backup','settings','more'].includes(S.view);
+  const inMore = ['reminders','products','customers','backup','settings','more'].includes(S.view);
   $('#bnav').innerHTML = MOBILE.map(k=>'<button class="'+((S.view===k||(k==='more'&&inMore))?'on':'')+'" data-go="'+k+'">'+mv[k][1]+mv[k][0]+'</button>').join('');
 }
 
@@ -366,10 +370,11 @@ function render(){
   if(S.slow) h += '<div class="banner">Still connecting to the online database… data shown may be incomplete or out of date.</div>';
   if(S.readOnly) h += '<div class="banner">You have view-only access to this app. Ask the owner for Contributor access to add or change records.</div>';
   if(S.mode==='revoked') h += '<div class="banner">Your account has no permission to read or write bakery data. Check the Firestore rules in the setup guide.</div>';
-  const fn = {dashboard:vDash,orders:vOrders,money:vMoney,reports:vReports,products:vProducts,customers:vCustomers,backup:vBackup,settings:vSettings,more:vMore}[S.view] || vDash;
+  const fn = {dashboard:vDash,orders:vOrders,money:vMoney,reports:vReports,products:vProducts,customers:vCustomers,reminders:vReminders,backup:vBackup,settings:vSettings,more:vMore}[S.view] || vDash;
   h += fn();
   m.innerHTML = h;
   if(S.view==='reports' || S.view==='dashboard') bindChart();
+  schedSoon();
   if(focusId){ const el = document.getElementById(focusId); if(el){ el.focus(); try{ if(caret!=null) el.setSelectionRange(caret,caret); }catch(e){} } }
 }
 
@@ -395,6 +400,8 @@ function vDash(){
   const upcoming = active.slice().sort((a,b)=>(a.deliveryDate+(a.deliveryTime||'')).localeCompare(b.deliveryDate+(b.deliveryTime||''))).slice(0,8);
 
   let h = pageTop('Namaste! 👋', '<button class="btn" data-act="quickSale">'+I.money+'Counter sale</button><button class="btn" data-act="newExpense">'+I.money+'Add expense</button><button class="btn pri" data-act="newOrder">'+I.plus+'New order</button>');
+  const remDue = dueReminders();
+  if(remDue.length) h += '<div class="banner" style="background:#e3f4ea;border-color:#bfe3cd;color:#14653a;cursor:pointer" data-go="reminders">🔔 <b>'+remDue.length+' customer'+(remDue.length>1?'s':'')+' to message today</b> (birthday wishes / order-again reminders). Tap to open.</div>';
   h += '<div class="grid kpis">' +
     kpi("Today's income", fmt(incT), 'Expense today: '+fmt(expT)) +
     kpi('This month profit', fmt(incM-expM), 'Income '+fmt(incM)+' · Expense '+fmt(expM)) +
@@ -573,22 +580,108 @@ function vProducts(){
 }
 
 /* ---------- Customers ---------- */
+function custKey(o){ return waNumber(o.phone) || String(o.customer||o.name||'').toLowerCase(); }
+function birthdayFor(o){ const k = custKey(o); if(!k) return ''; const c = S.customers.find(x=>custKey(x)===k); return (c && c.birthday) || ''; }
+async function upsertCustomer(name, phone, birthday){
+  const key = waNumber(phone);
+  if(!key && !birthday) return;
+  const c = S.customers.find(x=> key ? waNumber(x.phone)===key : String(x.name||'').toLowerCase()===String(name||'').toLowerCase());
+  if(c){ const rec = {...c, name:name||c.name, phone:phone||c.phone}; if(birthday) rec.birthday = birthday; if(rec.name!==c.name || rec.birthday!==c.birthday || rec.phone!==c.phone) await put('customers', rec); }
+  else await put('customers', {id: key ? 'c'+key : uid(), name, phone, birthday: birthday||''});
+}
+function shortDM(s){ if(!s) return '—'; const d = new Date(s+'T00:00:00'); return d.getDate()+' '+MON[d.getMonth()]; }
 function vCustomers(){
   const m = {};
+  S.customers.forEach(c=>{ const k = custKey(c); if(!k) return; m[k] = {name:c.name, phone:c.phone, birthday:c.birthday||'', cid:c.id, orders:0, spent:0, due:0, last:''}; });
   S.orders.forEach(o=>{
-    const key = waNumber(o.phone) || (o.customer||'').toLowerCase();
-    if(!key) return;
-    const c = m[key] ||= {name:o.customer, phone:o.phone, orders:0, spent:0, due:0, last:''};
+    const key = custKey(o); if(!key) return;
+    const c = m[key] ||= {name:o.customer, phone:o.phone, birthday:'', cid:'', orders:0, spent:0, due:0, last:''};
     if(o.status!=='Cancelled'){ c.orders++; c.spent += orderTotal(o); c.due += orderBalance(o); }
     if((o.deliveryDate||'') > c.last){ c.last = o.deliveryDate; c.name = o.customer; }
   });
-  const list = Object.values(m).sort((a,b)=>b.spent-a.spent);
-  let h = pageTop('Customers');
-  if(!list.length) return h + '<div class="card">'+emptyBox('Customers appear here automatically from your orders.')+'</div>';
-  h += '<div class="card tw"><table class="tbl"><thead><tr><th>Customer</th><th class="num">Orders</th><th class="num">Total spent</th><th class="num">Due</th><th>Last order</th><th></th></tr></thead><tbody>'+
-    list.map(c=>'<tr><td><b>'+esc(c.name)+'</b><div class="hint">'+esc(c.phone||'')+'</div></td><td class="num">'+c.orders+'</td><td class="num">'+fmt(c.spent)+'</td><td class="num" style="color:'+(c.due>0?'var(--bad)':'inherit')+'">'+(c.due>0?fmt(c.due):'—')+'</td><td>'+niceDate(c.last)+'</td><td class="num">'+(waNumber(c.phone)?'<a class="btn sm wa" target="_blank" rel="noopener" href="'+esc(waLink(c.phone,'Namaste '+c.name+' 🙏 '))+'">'+I.wa+'Chat</a>':'')+'</td></tr>').join('')+
+  S.custCache = m;
+  const list = Object.entries(m).sort((a,b)=>b[1].spent-a[1].spent);
+  let h = pageTop('Customers', '<button class="btn pri" data-act="newCust">'+I.plus+'Add customer</button>');
+  if(!list.length) return h + '<div class="card">'+emptyBox('Customers appear here automatically from your orders. Add birthdays to send birthday wishes.')+'</div>';
+  h += '<div class="card tw"><table class="tbl"><thead><tr><th>Customer</th><th>Birthday</th><th class="num">Orders</th><th class="num">Total spent</th><th class="num">Due</th><th>Last order</th><th></th></tr></thead><tbody>'+
+    list.map(([k,c])=>'<tr><td><b>'+esc(c.name)+'</b><div class="hint">'+esc(c.phone||'')+'</div></td><td>'+(c.birthday?'🎂 '+shortDM(c.birthday):'<span class="hint">not set</span>')+'</td><td class="num">'+c.orders+'</td><td class="num">'+fmt(c.spent)+'</td><td class="num" style="color:'+(c.due>0?'var(--bad)':'inherit')+'">'+(c.due>0?fmt(c.due):'—')+'</td><td>'+niceDate(c.last)+'</td><td class="num"><button class="btn sm ghost" data-act="editCust" data-k="'+esc(k)+'">'+I.edit+'</button>'+(waNumber(c.phone)?' <a class="btn sm wa" target="_blank" rel="noopener" href="'+esc(waLink(c.phone,'Namaste '+c.name+' 🙏 '))+'">'+I.wa+'</a>':'')+'</td></tr>').join('')+
     '</tbody></table></div>';
   return h;
+}
+function customerForm(c){
+  const isNew = !c; c = c || {name:'', phone:'', birthday:'', cid:''};
+  openModal('<h2>'+(isNew?'Add customer':'Edit customer')+'</h2><form id="cuForm"><div class="fg"><label class="f">Name *<input class="in" name="name" required value="'+esc(c.name)+'"></label><label class="f">Phone (WhatsApp)<input class="in" name="phone" inputmode="tel" value="'+esc(c.phone)+'"></label><label class="f">Birthday<input type="date" class="in" name="birthday" value="'+esc(c.birthday)+'"></label></div><p class="hint">With a birthday saved, the app reminds you one day before so you can send a WhatsApp wish and an order invitation.</p><div class="ft"><button type="button" class="btn" data-close="1">Cancel</button><button class="btn pri" type="submit">Save</button></div></form>');
+  $('#cuForm').onsubmit = async ev => { ev.preventDefault(); const fd = new FormData(ev.target);
+    try{
+      if(c.cid){ const old = S.customers.find(x=>x.id===c.cid); await put('customers', {...(old||{id:c.cid}), name:fd.get('name').trim(), phone:fd.get('phone').trim(), birthday:fd.get('birthday')}); }
+      else { const ph = fd.get('phone').trim(); const key = waNumber(ph); await put('customers', {id: key?'c'+key:uid(), name:fd.get('name').trim(), phone:ph, birthday:fd.get('birthday')}); }
+      toast('Saved ✓'); closeModal();
+    }catch(e){} };
+}
+
+/* ---------- Reminders (birthday + yearly order-again) ---------- */
+function addYears(s,k){ const d = new Date(s+'T00:00:00'); d.setFullYear(d.getFullYear()+k); return ymd(d); }
+function bdayInYear(md, yr){ let m = md; if(m==='02-29' && new Date(yr,1,29).getMonth()!==1) m='02-28'; return yr+'-'+m; }
+function remindersFor(day){
+  const out = [], yr = +day.slice(0,4);
+  S.customers.forEach(c=>{
+    if(!c.birthday || !(c.phone||c.name)) return;
+    const md = c.birthday.slice(5);
+    [yr, yr+1].forEach(y=>{
+      const bd = bdayInYear(md,y), start = addDays(bd,-1);
+      if(day>=start && day<=bd) out.push({id:'bd-'+c.id+'-'+y, type:'bday', name:c.name, phone:c.phone, date:bd, start, tplKey:'tplBirthday', obj:{id:'bd-'+c.id, customer:c.name, phone:c.phone, items:[], type:'Pickup'}});
+    });
+  });
+  const latest = {};
+  S.orders.forEach(o=>{ if(o.status==='Cancelled' || !o.deliveryDate) return; const k = custKey(o); if(!k) return; if(!latest[k] || o.deliveryDate>latest[k].deliveryDate) latest[k]=o; });
+  Object.values(latest).forEach(o=>{
+    for(let k=1;k<=10;k++){
+      const ann = addYears(o.deliveryDate,k), start = addDays(ann,-1), end = addDays(ann,5);
+      if(day>=start && day<=end) out.push({id:'an-'+o.id+'-'+k, type:'anniv', name:o.customer, phone:o.phone, date:ann, start, tplKey:'tplAnniv', obj:o});
+    }
+  });
+  return out;
+}
+function sentSet(){ return new Set(S.reminders.map(r=>r.id)); }
+function dueReminders(){ const ss = sentSet(); return remindersFor(today()).filter(r=>!ss.has(r.id)); }
+async function markSent(id){ if(S.reminders.some(r=>r.id===id)) return; try{ await put('reminders', {id, sentAt:new Date().toISOString()}); }catch(e){} }
+function vReminders(){
+  const day = today(), ss = sentSet();
+  const due = dueReminders(), seen = new Set(due.map(r=>r.id)), up = [];
+  for(let i=1;i<=14;i++){ remindersFor(addDays(day,i)).forEach(r=>{ if(!ss.has(r.id) && !seen.has(r.id) && r.start>day){ seen.add(r.id); up.push(r); } }); }
+  S.remCache = {}; [...due,...up].forEach(r=>S.remCache[r.id]=r);
+  const native = window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform();
+  let h = pageTop('Reminders');
+  if(native) h += '<div class="card" style="margin-bottom:14px"><div class="row"><div style="flex:1"><b>🔔 Daily phone notification</b><div class="hint">At 9:00 AM the phone tells you how many customers to message.</div></div><button class="btn pri" data-act="enableNotif">Turn on</button></div></div>';
+  const item = (r, canSend) => {
+    const label = r.type==='bday' ? '🎂 Birthday on '+niceDate(r.date) : '🔁 One year since last order · '+niceDate(r.date);
+    const sub = r.type==='anniv' ? '<div class="hint">'+esc(itemsText(r.obj))+'</div>' : '';
+    return '<div class="card" style="margin-bottom:10px"><div class="row"><div style="flex:1;min-width:180px"><b>'+esc(r.name)+'</b><div class="hint">'+label+(r.phone?' · '+esc(r.phone):' · <span class="late">no phone</span>')+'</div>'+sub+'</div>'+
+      (canSend ? (waNumber(r.phone)?'<button class="btn sm wa" data-act="sendRem" data-rid="'+esc(r.id)+'">'+I.wa+'Send message</button>':'')+'<button class="btn sm" data-act="markSent" data-rid="'+esc(r.id)+'">Mark done</button>' : '<span class="pill st-Pending">from '+niceDate(r.start)+'</span>')+'</div></div>';
+  };
+  h += '<div class="sec" style="margin-top:0"><h2 style="margin-bottom:10px">To message now ('+due.length+')</h2>'+(due.length?due.map(r=>item(r,true)).join(''):'<div class="card">'+emptyBox('Nobody to message today 🎉<br><span class="hint">Reminders appear 1 day before a customer\'s birthday and 1 day before the one-year anniversary of their last order.</span>')+'</div>')+'</div>';
+  if(up.length) h += '<div class="sec"><h2 style="margin-bottom:10px">Coming in the next 2 weeks ('+up.length+')</h2>'+up.sort((a,b)=>a.start.localeCompare(b.start)).map(r=>item(r,false)).join('')+'</div>';
+  return h;
+}
+/* phone notification at 9 AM on days that have reminders */
+let _schedT = null;
+function schedSoon(){ clearTimeout(_schedT); _schedT = setTimeout(scheduleNotifs, 2500); }
+function notifPlugin(){ return window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform() && Capacitor.Plugins && Capacitor.Plugins.LocalNotifications; }
+async function scheduleNotifs(){
+  const LN = notifPlugin(); if(!LN || !Object.values(S.loaded).every(Boolean)) return;
+  try{
+    const perm = await LN.checkPermissions(); if(perm.display!=='granted') return;
+    const pend = await LN.getPending();
+    if(pend.notifications && pend.notifications.length) await LN.cancel({notifications: pend.notifications.map(n=>({id:n.id}))});
+    const ss = sentSet(), list = [];
+    for(let i=0;i<14;i++){
+      const day = addDays(today(), i), items = remindersFor(day).filter(r=>!ss.has(r.id));
+      if(!items.length) continue;
+      const at = new Date(day+'T09:00:00'); if(at <= new Date()) continue;
+      list.push({id:2000+i, title:'🎂 '+(S.config.shopName||'Sunrise Bakery'), body: items.length+' customer'+(items.length>1?'s':'')+' to message today: '+items.slice(0,3).map(r=>r.name).join(', ')+(items.length>3?'…':''), schedule:{at}});
+    }
+    if(list.length) await LN.schedule({notifications:list});
+  }catch(e){}
 }
 
 /* ---------- Backup ---------- */
@@ -618,10 +711,16 @@ function vSettings(){
     '<label class="f full">🎂 Cake ready message<textarea class="in" name="tplReady" rows="7">'+esc(c.tplReady)+'</textarea></label>'+
     '<label class="f full">🧾 Order confirmation<textarea class="in" name="tplConfirm" rows="7">'+esc(c.tplConfirm)+'</textarea></label>'+
     '<label class="f full">💰 Payment reminder<textarea class="in" name="tplReminder" rows="3">'+esc(c.tplReminder)+'</textarea></label>'+
+    '<label class="f full">🎂 Birthday wish + order invitation<textarea class="in" name="tplBirthday" rows="6">'+esc(c.tplBirthday)+'</textarea></label>'+
+    '<label class="f full">🔁 One-year "order again" reminder<textarea class="in" name="tplAnniv" rows="6">'+esc(c.tplAnniv)+'</textarea></label>'+
     '<label class="f full">😊 Thank-you after delivery<textarea class="in" name="tplThanks" rows="4">'+esc(c.tplThanks)+'</textarea></label>'+
     '<label class="chk full"><input type="checkbox" name="autoReady" '+(c.autoReady!==false?'checked':'')+'> Open the WhatsApp “cake ready” message automatically when an order is marked Ready</label>'+
     '<label class="chk full"><input type="checkbox" name="autoConfirm" '+(c.autoConfirm!==false?'checked':'')+'> Offer the order confirmation message after saving a new order</label>'+
     '</div><div class="ft" style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px"><button type="button" class="btn" data-act="resetTpl">Reset templates</button><button class="btn pri" type="submit">Save settings</button></div></form>';
+  let hasCfg = false; try{ hasCfg = !!JSON.parse(localStorage.getItem('sb_firebase_cfg')||'null'); }catch(e){}
+  h += '<div class="card sec"><h2>☁️ Cloud sync (share between phones)</h2><p class="hint" style="font-size:14px">Status: <b>'+(S.mode==='online'?'Connected — all phones share the same data':hasCfg?'Saved, reconnecting…':'Not connected (data stays on this phone)')+'</b></p>'+
+    (S.mode==='online'?'':'<p class="hint" style="font-size:14px">Create a free Firebase project (see the setup guide), then paste its <b>firebaseConfig</b> block here.</p><label class="f">Paste firebaseConfig<textarea class="in" id="cloudCfg" rows="6" placeholder=\'const firebaseConfig = { apiKey: "...", authDomain: "...", projectId: "...", appId: "..." };\'></textarea></label>')+
+    '<div class="row" style="margin-top:12px">'+(S.mode==='online'?'<button class="btn pri" data-act="uploadLocal">Copy this phone\'s old data to cloud</button>':'<button class="btn pri" data-act="saveCloud">Save &amp; connect</button>')+(hasCfg?'<button class="btn danger" data-act="clearCloud">Disconnect</button>':'')+'</div></div>';
   return h;
 }
 
@@ -648,6 +747,7 @@ function orderForm(o){
   openModal('<h2>'+(isNew?'New order':'Edit order '+esc(o.no))+'</h2><form id="oForm"><div class="fg">'+
     '<label class="f">Customer name *<input class="in" name="customer" required value="'+esc(o.customer)+'" list="custList"></label>'+
     '<label class="f">Phone (WhatsApp)<input class="in" name="phone" inputmode="tel" value="'+esc(o.phone)+'" placeholder="98XXXXXXXX"></label>'+
+    '<label class="f">Customer birthday <span class="hint">(optional — for a birthday wish)</span><input type="date" class="in" name="birthday" value="'+esc(birthdayFor(o))+'"></label>'+
     '<div class="full"><div class="f" style="font-size:13px;font-weight:600;color:var(--ink2);margin-bottom:5px">Items <span class="hint">(pick from menu or type your own)</span></div><div class="items" id="itemsBox"></div><button type="button" class="btn sm" id="addItem">'+I.plus+'Add item</button></div>'+
     '<label class="f">Cake flavour<input class="in" name="flavor" value="'+esc(c.flavor)+'" placeholder="Black Forest, Red Velvet…"></label>'+
     '<label class="f">Weight / size<input class="in" name="weight" value="'+esc(c.weight)+'" placeholder="1 lb, 2 lb, 1 kg"></label>'+
@@ -685,6 +785,7 @@ function orderForm(o){
   box.addEventListener('click', e=>{ const r = e.target.closest('[data-rm]'); if(r){ items.splice(+r.dataset.rm,1); if(!items.length) items=[{name:'',qty:1,price:''}]; drawItems(); } });
   $('#addItem').onclick = ()=>{ items.push({name:'',qty:1,price:''}); drawItems(); };
   f.addEventListener('input', sum);
+  f.phone.addEventListener('change', ()=>{ if(!f.birthday.value){ const b = birthdayFor({phone:f.phone.value, customer:f.customer.value}); if(b) f.birthday.value = b; } });
   drawItems();
   if(!isNew) $('#delOrder').onclick = ()=> confirmBox('Delete order <b>'+esc(o.no)+'</b> for '+esc(o.customer)+'? Payments recorded for it stay in Income & Expense.', 'Delete order', async ()=>{ try{ await del('orders', o.id); toast('Order deleted'); }catch(e){} });
   f.onsubmit = async ev => {
@@ -699,6 +800,7 @@ function orderForm(o){
     if(!isNew) rec.status = fd.get('status'); else rec.createdAt = new Date().toISOString();
     try{
       await put('orders', rec);
+      try{ await upsertCustomer(rec.customer, rec.phone, fd.get('birthday')); }catch(e){}
       if(isNew){
         const adv = num(fd.get('advance'));
         if(adv>0) await put('txns', {id:uid(), type:'income', category:'Order Advance', amount:adv, method:fd.get('method'), date:today(), orderId:rec.id, note:'Advance · '+rec.no+' · '+rec.customer, createdAt:new Date().toISOString()});
@@ -711,7 +813,7 @@ function orderForm(o){
 }
 
 /* ----- WhatsApp ----- */
-function waModal(o, tplKey, title){
+function waModal(o, tplKey, title, remId){
   o = S.orders.find(x=>x.id===o.id) || o;
   const text = fillTpl(S.config[tplKey], o);
   const hasPhone = !!waNumber(o.phone);
@@ -722,7 +824,7 @@ function waModal(o, tplKey, title){
   const ta = $('#waText');
   ta.addEventListener('input', ()=>{ const a = $('#waSend'); if(a) a.href = waLink(o.phone, ta.value); });
   $('#waCopy').onclick = async ()=>{ try{ await navigator.clipboard.writeText(ta.value); toast('Copied'); }catch(e){ ta.select(); toast('Select the text and copy it'); } };
-  const s = $('#waSend'); if(s) s.addEventListener('click', ()=>{ setTimeout(()=>{ closeModal(); toast('WhatsApp opened — tap send there'); }, 300); });
+  const s = $('#waSend'); if(s) s.addEventListener('click', ()=>{ if(remId) markSent(remId); setTimeout(()=>{ closeModal(); toast('WhatsApp opened — tap send there'); }, 300); });
 }
 function waMenu(o){
   const bal = orderBalance(o);
@@ -815,7 +917,7 @@ async function setStatus(id, s){
 }
 
 /* ============ Backup / restore / export ============ */
-function backupJSON(){ return JSON.stringify({app:'sunrise-bakery', version:1, exportedAt:new Date().toISOString(), config:S.config, products:S.products, orders:S.orders, txns:S.txns}, null, 1); }
+function backupJSON(){ return JSON.stringify({app:'sunrise-bakery', version:1, exportedAt:new Date().toISOString(), config:S.config, products:S.products, customers:S.customers, reminders:S.reminders, orders:S.orders, txns:S.txns}, null, 1); }
 async function saveFile(name, data){
   const cap = window.Capacitor;
   if(cap && cap.isNativePlatform && cap.isNativePlatform() && cap.Plugins && cap.Plugins.Filesystem && cap.Plugins.Share){
@@ -839,10 +941,10 @@ async function doRestore(mode){
     openModal('<h2>Restoring…</h2><p id="rProg">Please keep this page open.</p>');
     try{
       if(mode==='replace'){
-        for(const k of ['orders','txns','products']){ for(const r of [...S[k]]){ await del(k, r.id); } }
+        for(const k of ['orders','txns','products','customers','reminders']){ for(const r of [...S[k]]){ await del(k, r.id); } }
       }
       let n = 0; const total = (data.orders||[]).length+(data.txns||[]).length+(data.products||[]).length;
-      for(const k of ['products','orders','txns']){
+      for(const k of ['products','customers','orders','txns','reminders']){
         for(const r of (data[k]||[])){ if(r && r.id){ await put(k, {...r}); n++; if(n%10===0){ const p = $('#rProg'); if(p) p.textContent = 'Restored '+n+' of '+total+'…'; } } }
       }
       if(data.config) await putConfig(data.config);
@@ -897,7 +999,26 @@ document.addEventListener('click', async e => {
       await saveFile('sunrise-bakery-transactions-'+from+'-to-'+to+'.csv', rows.map(r=>r.map(csvEsc).join(',')).join('\n'));
       break; }
     case 'copyReport': try{ await navigator.clipboard.writeText(reportSummary()); toast('Summary copied'); }catch(err){ toast('Copy not allowed here'); } break;
-    case 'resetTpl': confirmBox('Reset all WhatsApp templates to default?', 'Reset', async ()=>{ try{ await putConfig({tplReady:DEFAULT_CONFIG.tplReady,tplConfirm:DEFAULT_CONFIG.tplConfirm,tplThanks:DEFAULT_CONFIG.tplThanks,tplReminder:DEFAULT_CONFIG.tplReminder}); toast('Templates reset'); }catch(e){} }); break;
+    case 'newCust': customerForm(); break;
+    case 'editCust': { const c = (S.custCache||{})[a.dataset.k]; if(c) customerForm(c); break; }
+    case 'sendRem': { const r = (S.remCache||{})[a.dataset.rid]; if(r) waModal(r.obj, r.tplKey, r.type==='bday'?'🎂 Birthday wish':'🔁 Order-again reminder', r.id); break; }
+    case 'markSent': markSent(a.dataset.rid).then(()=>toast('Marked done ✓')); break;
+    case 'enableNotif': { const LN = notifPlugin(); if(!LN){ toast('Notifications work in the Android app'); break; } try{ const r = await LN.requestPermissions(); if(r.display==='granted'){ toast('Notifications on ✓'); scheduleNotifs(); } else toast('Please allow notifications in phone settings'); }catch(err){ toast('Could not turn on notifications'); } break; }
+    case 'saveCloud': {
+      const txt = ($('#cloudCfg')||{}).value || ''; const cfg = {};
+      for(const m of txt.matchAll(/(\w+)\s*:\s*["']([^"']+)["']/g)) cfg[m[1]] = m[2];
+      if(!cfg.apiKey || !cfg.projectId || !cfg.appId){ toast('That does not look like a firebaseConfig — copy the whole block from Firebase.'); break; }
+      try{ localStorage.setItem('sb_firebase_cfg', JSON.stringify(cfg)); }catch(err){ toast('Could not save on this phone'); break; }
+      toast('Saved — reconnecting…'); setTimeout(()=>location.reload(), 900); break; }
+    case 'clearCloud': confirmBox('Disconnect cloud sync on this phone? Your cloud data stays safe online; this phone will use its own local data again.', 'Disconnect', async ()=>{ try{ localStorage.removeItem('sb_firebase_cfg'); }catch(err){} location.reload(); }); break;
+    case 'uploadLocal': {
+      let j = null; try{ j = JSON.parse(localStorage.getItem(LS_KEY)||'null'); }catch(err){}
+      if(!j || !((j.orders||[]).length||(j.txns||[]).length||(j.products||[]).length)){ toast('No older data on this phone to upload.'); break; }
+      toast('Uploading…'); let n = 0;
+      try{ for(const k of ['products','customers','orders','txns','reminders']){ for(const r of (j[k]||[])){ if(r && r.id){ await put(k, {...r}); n++; } } } toast('Uploaded '+n+' records to the cloud ✓'); }
+      catch(err){ toast('Upload stopped — try again with internet.'); }
+      break; }
+    case 'resetTpl': confirmBox('Reset all WhatsApp templates to default?', 'Reset', async ()=>{ try{ await putConfig({tplReady:DEFAULT_CONFIG.tplReady,tplConfirm:DEFAULT_CONFIG.tplConfirm,tplThanks:DEFAULT_CONFIG.tplThanks,tplReminder:DEFAULT_CONFIG.tplReminder,tplBirthday:DEFAULT_CONFIG.tplBirthday,tplAnniv:DEFAULT_CONFIG.tplAnniv}); toast('Templates reset'); }catch(e){} }); break;
   }
 });
 document.addEventListener('input', e => {
@@ -911,7 +1032,7 @@ document.addEventListener('change', e => {
 document.addEventListener('submit', async e => {
   if(e.target.id==='setForm'){
     e.preventDefault(); const fd = new FormData(e.target);
-    const cfg = {}; ['shopName','shopPhone','shopAddress','currency','tplReady','tplConfirm','tplReminder','tplThanks'].forEach(k=>cfg[k]=String(fd.get(k)||''));
+    const cfg = {}; ['shopName','shopPhone','shopAddress','currency','tplReady','tplConfirm','tplReminder','tplThanks','tplBirthday','tplAnniv'].forEach(k=>cfg[k]=String(fd.get(k)||''));
     cfg.autoReady = !!fd.get('autoReady'); cfg.autoConfirm = !!fd.get('autoConfirm');
     try{ await putConfig(cfg); toast('Settings saved ✓'); }catch(err){}
   }

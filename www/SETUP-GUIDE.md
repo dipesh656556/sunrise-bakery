@@ -21,7 +21,9 @@ You do **3 things**, one time only:
 5. In the left menu: **Build → Firestore Database → Create database**. Choose **Production mode** and a location near you (for Nepal, choose an Asia location such as `asia-south1`). Tap **Enable**.
 6. Open the **Rules** tab of Firestore. Delete everything there, paste the contents of the file `firestore.rules` from this folder, and tap **Publish**. This makes sure only signed-in staff can see your data.
 7. Click the gear icon ⚙ → **Project settings**. Scroll to **Your apps** → tap the web icon **`</>`** → name it `bakery` → **Register app**. You will see a block called `firebaseConfig`.
-8. Open the file `config.js` in this folder with any text editor (Notepad is fine). Replace the `PASTE…` values with the values from Firebase. Save the file.
+8. **Easiest:** in the Sunrise Bakery app go to **More → Settings → Cloud sync**, paste the whole `firebaseConfig` block, and tap **Save & connect**. Sign in with the email and password from step 4. Do this on every phone.
+   (Advanced: you can also paste the values into `www/config.js` in the GitHub repository instead.)
+9. If you already entered orders before connecting, open **Settings → Cloud sync → Copy this phone's old data to cloud** once.
 
 The free "Spark" plan is plenty for a bakery.
 
@@ -47,6 +49,13 @@ Upload the folder files to a new public GitHub repository, then **Settings → P
 After the first load, the app opens even without internet. Orders you add offline sync automatically when the phone is back online.
 
 ---
+
+## Birthday and "order again" reminders
+
+- Save a customer's birthday when you create an order (or in **Customers → Add customer**).
+- The **Reminders** screen shows who to message today: one day before each birthday, and one day before the one-year anniversary of each customer's last order.
+- Tap **Send message** to open WhatsApp with the wish and "remember Sunrise Bakery" text ready, then press send. Tap **Mark done** when finished.
+- In the Android app, tap **Turn on** in Reminders to get a 9:00 AM notification on days that have reminders. Edit the wording in **Settings**.
 
 ## Daily use
 
