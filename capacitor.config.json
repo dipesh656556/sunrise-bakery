@@ -1,0 +1,7 @@
+{
+  "appId": "com.sunrise.bakery",
+  "appName": "Sunrise Bakery",
+  "webDir": "www",
+  "android": { "allowMixedContent": false },
+  "server": { "androidScheme": "https" }
+}
