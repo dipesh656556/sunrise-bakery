@@ -306,7 +306,7 @@ async function getCloud(){
   let cfg = window.FIREBASE_CONFIG;
   try{ const l = JSON.parse(localStorage.getItem('sb_firebase_cfg')||'null'); if(l && l.apiKey) cfg = l; }catch(e){}
   if(!cfg || !cfg.apiKey || String(cfg.apiKey).startsWith('PASTE')) return null;
-  const v = '10.12.2', base = 'https://www.gstatic.com/firebasejs/'+v+'/';
+  const base = 'vendor/';
   await loadScript(base+'firebase-app-compat.js'); await loadScript(base+'firebase-auth-compat.js'); await loadScript(base+'firebase-firestore-compat.js');
   firebase.initializeApp(cfg);
   const auth = firebase.auth();

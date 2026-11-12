@@ -1,5 +1,8 @@
 # Sunrise Bakery Manager — Android App Setup Guide
 
+> **Already done for you:** Firebase project `sunrise-bakery-d95c1` has Email/Password sign-in turned on, a Firestore database (Mumbai region) with rules that allow only signed-in users, and its settings are built into the app (`www/config.js`).
+> **You only need to add staff logins:** Firebase console → Authentication → Users → Add user (email + password). Then open the app and sign in.
+
 This folder is your bakery app. It installs on an Android phone like a normal app (own icon, full screen, works without internet).
 
 You do **3 things**, one time only:
