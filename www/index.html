@@ -148,6 +148,32 @@ textarea.in{min-height:80px;resize:vertical}
 }
 .mhead{display:none;align-items:center;gap:8px;margin-bottom:12px}
 .mhead b{font-family:'Fraunces',serif;font-size:18px}
+
+.st-New{background:#e3efff;color:#1b5fc1}
+.banner.alert{background:#fde8e6;border-color:#f3c0ba;color:#9b2318}
+.banner.blue{background:#e3efff;border-color:#bcd5f6;color:#1b5fc1;cursor:pointer}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;margin-top:10px}
+.mc{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);cursor:pointer;transition:transform .15s}
+.mc:hover{transform:translateY(-2px)}
+.mc.off{opacity:.5}
+.mc .ph{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;background:#f6ece0}
+.mc .mb{padding:11px 12px 13px}
+.mc .mb b{font-size:15px;display:block}
+.mc .pr{color:var(--brand);font-weight:700;margin:3px 0 7px;font-size:14px}
+.tags{display:flex;gap:5px;flex-wrap:wrap}
+.tg{font-size:11px;padding:2px 8px;border-radius:99px;background:#f1e9df;color:#6b5b4d;font-weight:600}
+.tg.on{background:#e3efff;color:#1b5fc1}.tg.ok{background:var(--ok-soft);color:var(--ok)}.tg.bad{background:var(--bad-soft);color:var(--bad)}
+.phrow{display:flex;gap:12px;align-items:flex-start}
+.phprev{width:132px;height:99px;object-fit:cover;border-radius:12px;border:1px solid var(--line);background:#f6ece0}
+.sz,.rc{display:grid;gap:6px;margin-bottom:6px}
+.sz{grid-template-columns:1fr 70px 100px 34px!important}
+.rc{grid-template-columns:1fr 70px 38px 78px 34px!important}
+.sbar{height:6px;background:#f1e9df;border-radius:4px;margin-top:5px;overflow:hidden;max-width:150px}
+.sbar i{display:block;height:100%;border-radius:4px}
+.sbar i.ok{background:#2f9e5e}.sbar i.warn{background:#e8a317}.sbar i.bad{background:#d62d20}
+.bnav button{position:relative}
+.bd{position:absolute;top:1px;left:calc(50% + 6px);background:#d62d20;color:#fff;font-size:10px;line-height:1;border-radius:9px;padding:2px 5px;font-style:normal;font-weight:700}
+@media(max-width:760px){.bnav button{font-size:10px}.phrow{flex-direction:column}.mgrid{grid-template-columns:repeat(2,1fr);gap:10px}}
 </style>
 </head>
 <body>
@@ -176,13 +202,14 @@ const I = {
   edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',
   trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>',
   bill:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l3-2 3 2 2-2 2 2 3-2 3 2V2l-3 2-3-2-2 2-2-2-3 2z"/><path d="M8 9h8M8 13h6"/></svg>',
+  box:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>',
   cake:'<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20M12 8v3M12 4.5a1 1 0 0 1 0-1.5"/></svg>'
 };
 const LOGO = '<svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="20" fill="#f39a2b"/><path d="M8 25a12 12 0 0 1 24 0z" fill="#fff6e8"/><g stroke="#fff6e8" stroke-width="2" stroke-linecap="round"><path d="M20 7v3M10.5 11l2 2M29.5 11l-2 2M6 18h3M31 18h3"/></g><rect x="7" y="25" width="26" height="2.4" rx="1.2" fill="#5a3420"/></svg>';
 
 /* ============ Constants ============ */
-const STATUSES = ['Pending','Baking','Ready','Delivered','Cancelled'];
-const STATUS_LABEL = {Pending:'Pending',Baking:'In Kitchen',Ready:'Ready',Delivered:'Delivered',Cancelled:'Cancelled'};
+const STATUSES = ['New','Pending','Baking','Ready','Delivered','Cancelled'];
+const STATUS_LABEL = {New:'New online',Pending:'Pending',Baking:'In Kitchen',Ready:'Ready',Delivered:'Delivered',Cancelled:'Cancelled'};
 const METHODS = ['Cash','eSewa','Khalti','FonePay QR','Bank Transfer','Card'];
 const INC_CATS = ['Order Advance','Order Payment','Counter Sale','Catering','Other Income'];
 const EXP_CATS = ['Ingredients (Flour, Sugar, Butter…)','Dairy & Eggs','Cream & Decorations','Packaging & Boxes','Gas / Fuel','Electricity','Water','Rent','Staff Salary','Delivery / Transport','Marketing & Ads','Equipment & Repair','Other Expense'];
@@ -193,13 +220,19 @@ const DEFAULT_CONFIG = {
   tplThanks:'Thank you {name} for choosing *{shop}*! 😊\nWe hope everyone enjoyed the {items}.\nWe would love your feedback — and see you again soon! 🎂',
   tplReminder:'Namaste {name} 🙏\nGentle reminder from *{shop}*: balance of {cur} {balance} is pending for order {order}. Thank you!',
   tplBirthday:'Namaste {name} 🙏\n\n🎂🎉 *Happy Birthday {name}!* 🎉🎂\nWishing you a day full of joy and sweetness from all of us at *{shop}*.\n\nCelebrating with a special cake? Order from us — remember *{shop}*! 🍰\n📞 {shopphone}',
-  tplAnniv:'Namaste {name} 🙏\n\nIt has been a year since you celebrated with *{shop}* ({items}) 🎂\nHave a special occasion coming up? Order your cake with us again — remember *{shop}*! 🍰\n\n📞 {shopphone}\n📍 {address}'
+  tplAnniv:'Namaste {name} 🙏\n\nIt has been a year since you celebrated with *{shop}* ({items}) 🎂\nHave a special occasion coming up? Order your cake with us again — remember *{shop}*! 🍰\n\n📞 {shopphone}\n📍 {address}',
+  tplOnlineAccept:'Namaste {name} 🙏\n\nThank you for your online order with *{shop}*! ✅ Your order *{order}* is accepted.\n\n🎂 {items}\n📅 {type}: {when}\n💰 Total: {cur} {total}\n\n{pay}\n\nWe will message you when it is ready. 📞 {shopphone}',
+  tplDecline:'Namaste {name} 🙏\nSorry, we are not able to take your online order *{order}* for {when}. Please call us on {shopphone} and we will arrange another date or item.\n\n— {shop}',
+  onlineEnabled:true, minNoticeDays:1, advancePercent:50, openHours:'7:00 AM – 8:00 PM', lowStockNotif:true,
+  welcomeText:'Freshly baked cakes & pastries, made with love. Order online and pick up from our shop.',
+  payNote:'Please pay the advance by FonePay QR and send the screenshot on WhatsApp so we can confirm your order.', payBank:'', payQr:'img/payment-qr.jpg',
+  orderUrl:'https://dipesh656556.github.io/sunrise-bakery/order.html', seeded:false
 };
 
 /* ============ State ============ */
 const S = {
-  view:'dashboard', orders:[], txns:[], products:[], customers:[], reminders:[], config:{...DEFAULT_CONFIG},
-  mode:'loading', loaded:{orders:false,txns:false,products:false,customers:false,reminders:false,config:false},
+  view:'dashboard', orders:[], txns:[], products:[], customers:[], reminders:[], ingredients:[], extras:[], stockLog:[], pub:{menu:{},info:null,ready:false}, invTab:'all', invSearch:'', config:{...DEFAULT_CONFIG},
+  mode:'loading', loaded:{orders:false,txns:false,products:false,customers:false,reminders:false,ingredients:false,extras:false,stockLog:false,config:false},
   orderTab:'Active', orderSearch:'', txnFilter:'all', txnSearch:'',
   rep:{range:'month', from:'', to:''}, slow:false, readOnly:false
 };
@@ -245,7 +278,7 @@ function fillTpl(tpl, o){
     total: fmtN(o?orderTotal(o):0), paid: fmtN(o?orderPaid(o):0), balance: fmtN(bal),
     balance_line: bal > 0 ? ('💰 Remaining amount: ' + cur + ' ' + fmtN(bal)) : '✅ Payment: Fully paid',
     when, type: o?.type || 'Pickup', shop: S.config.shopName || 'Sunrise Bakery',
-    shopphone: S.config.shopPhone || '', address: S.config.shopAddress || '', cur
+    shopphone: S.config.shopPhone || '', address: S.config.shopAddress || '', cur, pay: S.config.payNote || ''
   };
   return String(tpl||'').replace(/\{(\w+)\}/g, (m,k) => k in map ? map[k] : m);
 }
@@ -257,10 +290,10 @@ function toast(msg){
 
 /* ============ Storage layer (online db, fallback local) ============ */
 const LS_KEY = 'sunrise_bakery_local_v1';
-function lsSave(){ try{ localStorage.setItem(LS_KEY, JSON.stringify({orders:S.orders,txns:S.txns,products:S.products,customers:S.customers,reminders:S.reminders,config:S.config})); }catch(e){} }
-function lsLoad(){ try{ const j = JSON.parse(localStorage.getItem(LS_KEY)||'null'); if(j){ S.orders=j.orders||[]; S.txns=j.txns||[]; S.products=j.products||[]; S.customers=j.customers||[]; S.reminders=j.reminders||[]; S.config={...DEFAULT_CONFIG,...(j.config||{})}; } }catch(e){} }
+function lsSave(){ try{ localStorage.setItem(LS_KEY, JSON.stringify({orders:S.orders,txns:S.txns,products:S.products,customers:S.customers,reminders:S.reminders,ingredients:S.ingredients,extras:S.extras,stockLog:S.stockLog,config:S.config})); }catch(e){} }
+function lsLoad(){ try{ const j = JSON.parse(localStorage.getItem(LS_KEY)||'null'); if(j){ S.orders=j.orders||[]; S.txns=j.txns||[]; S.products=j.products||[]; S.customers=j.customers||[]; S.reminders=j.reminders||[]; S.ingredients=j.ingredients||[]; S.extras=j.extras||[]; S.stockLog=j.stockLog||[]; S.config={...DEFAULT_CONFIG,...(j.config||{})}; } }catch(e){} }
 
-const COLS = {orders:'orders', txns:'txns', products:'products', customers:'customers', reminders:'reminders'};
+const COLS = {orders:'orders', txns:'txns', products:'products', customers:'customers', reminders:'reminders', ingredients:'ingredients', extras:'extras', stockLog:'stockLog'};
 async function put(col, obj){
   obj.updatedAt = new Date().toISOString();
   if(S.mode === 'online'){
@@ -328,12 +361,16 @@ async function init(){
   S.mode = 'online';
   const done = (k, fromCache) => { if(!fromCache) S.loaded[k] = true; if(Object.values(S.loaded).every(Boolean)){ ready = true; S.slow = false; clearTimeout(slowT); } };
   const onErr = e => { ready = true; clearTimeout(slowT); if(e && (e.code==='revoked' || e.code==='permission-denied')){ S.mode='revoked'; } toast('Connection problem: some data may be out of date.'); render(); };
-  for(const k of ['orders','txns','products','customers','reminders']){
-    db.collection(COLS[k]).onSnapshot(snap => {
+  for(const k of ['orders','txns','products','customers','reminders','ingredients','extras','stockLog']){
+    const ref = k==='stockLog' ? db.collection('stockLog').orderBy('at','desc').limit(200) : db.collection(COLS[k]);
+    ref.onSnapshot(snap => {
+      if(k==='orders' && S.loaded.orders){ snap.docChanges().forEach(ch=>{ if(ch.type==='added' && !snap.metadata.fromCache && !snap.metadata.hasPendingWrites){ const d = ch.doc.data(); if(d.source==='online' && d.status==='New'){ toast('🌐 New online order from '+(d.customer||'a customer')+'!'); beep(); pushNote('🌐 New online order', (d.customer||'Customer')+' · '+(d.no||'')); } } }); }
       S[k] = snap.docs.filter(d=>d.exists).map(d => ({...d.data(), id:d.id}));
       done(k, snap.metadata.fromCache); render();
     }, onErr);
   }
+  db.collection('pubMenu').onSnapshot(snap=>{ S.pub.menu = {}; snap.docs.forEach(d=>{ S.pub.menu[d.id] = d.data(); }); S.pub.ready = true; render(); }, ()=>{});
+  db.doc('pubInfo/shop').onSnapshot(snap=>{ S.pub.info = snap.exists ? snap.data() : null; render(); }, ()=>{});
   db.doc('config/shop').onSnapshot(snap => {
     S.config = {...DEFAULT_CONFIG, ...(snap.exists ? snap.data() : {})};
     done('config', snap.metadata.fromCache); render();
@@ -343,20 +380,21 @@ async function init(){
 /* ============ Navigation ============ */
 const VIEWS = [
   ['dashboard','Dashboard',I.home],['orders','Orders',I.orders],['reminders','Reminders',I.bell],['money','Income & Expense',I.money],
-  ['reports','Reports',I.report],['products','Menu & Prices',I.menu],['customers','Customers',I.users],
+  ['reports','Reports',I.report],['products','Cake Menu',I.menu],['inventory','Inventory & Stock',I.box],['customers','Customers',I.users],
   ['backup','Backup & Restore',I.backup],['settings','Settings',I.gear]
 ];
-const MOBILE = ['dashboard','orders','money','reports','more'];
+const MOBILE = ['dashboard','orders','money','reports','inventory','more'];
 function go(v){ S.view = v; closeModal(); render(); window.scrollTo(0,0); try{ history.replaceState(null,'','#'+v); }catch(e){} }
 
 function renderNav(){
   const st = S.mode==='online' ? '<span class="dot online"></span>Online · synced' : S.mode==='local' ? '<span class="dot local"></span>This phone only' : S.mode==='revoked' ? '<span class="dot"></span>Access removed' : '<span class="dot"></span>Connecting…';
   $('#side').innerHTML = '<div class="logo">'+LOGO+'<div><b>'+esc(S.config.shopName||'Sunrise Bakery')+'</b><small>Bakery Manager</small></div></div>' +
-    VIEWS.map(([k,l,ic])=>'<button class="nav'+(S.view===k?' on':'')+'" data-go="'+k+'">'+ic+l+(k==='reminders'&&dueReminders().length?'<span class="pill st-Pending" style="margin-left:auto">'+dueReminders().length+'</span>':'')+'</button>').join('') +
+    VIEWS.map(([k,l,ic])=>'<button class="nav'+(S.view===k?' on':'')+'" data-go="'+k+'">'+ic+l+(k==='reminders'&&dueReminders().length?'<span class="pill st-Pending" style="margin-left:auto">'+dueReminders().length+'</span>':'')+(k==='orders'&&newOnline().length?'<span class="pill st-New" style="margin-left:auto">'+newOnline().length+' new</span>':'')+(k==='inventory'&&lowItems().length?'<span class="pill st-Cancelled" style="margin-left:auto">'+lowItems().length+'</span>':'')+'</button>').join('') +
     '<div class="foot">'+st+'</div>';
-  const mv = {dashboard:['Home',I.home],orders:['Orders',I.orders],money:['Money',I.money],reports:['Reports',I.report],more:['More',I.menu]};
+  const mv = {dashboard:['Home',I.home],orders:['Orders',I.orders],money:['Money',I.money],reports:['Reports',I.report],inventory:['Stock',I.box],more:['More',I.menu]};
   const inMore = ['reminders','products','customers','backup','settings','more'].includes(S.view);
-  $('#bnav').innerHTML = MOBILE.map(k=>'<button class="'+((S.view===k||(k==='more'&&inMore))?'on':'')+'" data-go="'+k+'">'+mv[k][1]+mv[k][0]+'</button>').join('');
+  const bd = {orders:newOnline().length, inventory:lowItems().length};
+  $('#bnav').innerHTML = MOBILE.map(k=>'<button class="'+((S.view===k||(k==='more'&&inMore))?'on':'')+'" data-go="'+k+'">'+mv[k][1]+mv[k][0]+(bd[k]?'<i class="bd">'+bd[k]+'</i>':'')+'</button>').join('');
 }
 
 /* ============ Render ============ */
@@ -370,11 +408,11 @@ function render(){
   if(S.slow) h += '<div class="banner">Still connecting to the online database… data shown may be incomplete or out of date.</div>';
   if(S.readOnly) h += '<div class="banner">You have view-only access to this app. Ask the owner for Contributor access to add or change records.</div>';
   if(S.mode==='revoked') h += '<div class="banner">Your account has no permission to read or write bakery data. Check the Firestore rules in the setup guide.</div>';
-  const fn = {dashboard:vDash,orders:vOrders,money:vMoney,reports:vReports,products:vProducts,customers:vCustomers,reminders:vReminders,backup:vBackup,settings:vSettings,more:vMore}[S.view] || vDash;
+  const fn = {dashboard:vDash,orders:vOrders,money:vMoney,reports:vReports,products:vProducts,inventory:vInventory,customers:vCustomers,reminders:vReminders,backup:vBackup,settings:vSettings,more:vMore}[S.view] || vDash;
   h += fn();
   m.innerHTML = h;
   if(S.view==='reports' || S.view==='dashboard') bindChart();
-  schedSoon();
+  schedSoon(); schedPub();
   if(focusId){ const el = document.getElementById(focusId); if(el){ el.focus(); try{ if(caret!=null) el.setSelectionRange(caret,caret); }catch(e){} } }
 }
 
@@ -392,7 +430,7 @@ function vDash(){
   const mStart = t.slice(0,8)+'01';
   const incM = tx.filter(x=>x.type==='income'&&x.date>=mStart&&x.date<=t).reduce((a,x)=>a+num(x.amount),0);
   const expM = tx.filter(x=>x.type==='expense'&&x.date>=mStart&&x.date<=t).reduce((a,x)=>a+num(x.amount),0);
-  const active = S.orders.filter(o=>['Pending','Baking','Ready'].includes(o.status));
+  const active = S.orders.filter(o=>ACTIVE.includes(o.status));
   const dueToday = active.filter(o=>o.deliveryDate===t);
   const late = active.filter(o=>o.deliveryDate && o.deliveryDate<t);
   const ready = active.filter(o=>o.status==='Ready');
@@ -402,12 +440,17 @@ function vDash(){
   let h = pageTop('Namaste! 👋', '<button class="btn" data-act="quickSale">'+I.money+'Counter sale</button><button class="btn" data-act="newExpense">'+I.money+'Add expense</button><button class="btn pri" data-act="newOrder">'+I.plus+'New order</button>');
   const remDue = dueReminders();
   if(remDue.length) h += '<div class="banner" style="background:#e3f4ea;border-color:#bfe3cd;color:#14653a;cursor:pointer" data-go="reminders">🔔 <b>'+remDue.length+' customer'+(remDue.length>1?'s':'')+' to message today</b> (birthday wishes / order-again reminders). Tap to open.</div>';
+  const nOn = newOnline(), lowI = lowItems();
+  if(nOn.length) h += '<div class="banner blue" data-newtab="1">🌐 <b>'+nOn.length+' new online order'+(nOn.length>1?'s':'')+'</b> waiting for you. Tap to review and accept.</div>';
+  if(lowI.length) h += '<div class="banner alert" style="cursor:pointer" data-go="inventory">⚠️ <b>Low stock:</b> '+lowI.slice(0,5).map(i=>esc(i.name)+' ('+fmtQ(i.stock)+' '+esc(i.unit)+')').join(', ')+(lowI.length>5?' +'+(lowI.length-5)+' more':'')+'. Tap to open Inventory.</div>';
+  if(!S.config.seeded && !S.ingredients.length && Object.values(S.loaded).every(Boolean)) h += '<div class="card" style="margin-bottom:14px;border-color:#f0c58a;background:#fff8ec"><b>🎂 Set up your cake menu, stock & online ordering</b><p class="hint" style="font-size:14px;margin:6px 0 10px">One tap loads 10 cakes, pastries, 28 ingredients with recipes, extras and photos. Then just adjust prices and stock.</p><button class="btn pri" data-act="seedAll">Load starter menu, stock & recipes</button></div>';
   h += '<div class="grid kpis">' +
     kpi("Today's income", fmt(incT), 'Expense today: '+fmt(expT)) +
     kpi('This month profit', fmt(incM-expM), 'Income '+fmt(incM)+' · Expense '+fmt(expM)) +
     kpi('Orders due today', dueToday.length, late.length ? '<span class="late">'+late.length+' overdue</span>' : 'None overdue') +
     kpi('Ready for pickup', ready.length, active.length+' active orders') +
     kpi('Money to collect', fmt(pendingDues), 'Unpaid balances on orders') +
+    kpi('Low stock items', '<span'+(lowI.length?' class="late"':'')+'>'+lowI.length+'</span>', lowI.length?'Tap banner above':'All ingredients OK') +
   '</div>';
   h += '<div class="grid two sec">';
   h += '<div class="card"><div class="row" style="margin-bottom:10px"><h2 style="margin:0">Upcoming orders</h2><span class="sp"></span><button class="btn sm" data-go="orders">View all</button></div>';
@@ -467,6 +510,7 @@ function bindChart(){
 /* ---------- Orders ---------- */
 function nextBtn(o, small){
   const sm = small ? ' sm' : ' sm';
+  if(o.status==='New') return '<button class="btn pri'+sm+'" data-act="acceptOnline" data-id="'+o.id+'">✅ Accept</button><button class="btn danger'+sm+'" data-act="declineOnline" data-id="'+o.id+'">Decline</button>';
   if(o.status==='Pending') return '<button class="btn'+sm+'" data-act="setStatus" data-id="'+o.id+'" data-s="Baking">Start baking</button>';
   if(o.status==='Baking') return '<button class="btn pri'+sm+'" data-act="setStatus" data-id="'+o.id+'" data-s="Ready">🎂 Mark ready</button>';
   if(o.status==='Ready') return '<button class="btn'+sm+'" data-act="setStatus" data-id="'+o.id+'" data-s="Delivered">Delivered ✓</button>';
@@ -476,10 +520,10 @@ function vOrders(){
   const t = today();
   const q = S.orderSearch.trim().toLowerCase();
   const counts = {Active:0, Today:0}; STATUSES.forEach(s=>counts[s]=0); counts.All = S.orders.length;
-  S.orders.forEach(o=>{ counts[o.status]=(counts[o.status]||0)+1; if(['Pending','Baking','Ready'].includes(o.status)){ counts.Active++; if(o.deliveryDate===t) counts.Today++; } });
+  S.orders.forEach(o=>{ counts[o.status]=(counts[o.status]||0)+1; if(ACTIVE.includes(o.status)){ counts.Active++; if(o.deliveryDate===t) counts.Today++; } });
   let list = S.orders.filter(o=>{
-    if(S.orderTab==='Active' && !['Pending','Baking','Ready'].includes(o.status)) return false;
-    if(S.orderTab==='Today' && !(o.deliveryDate===t && ['Pending','Baking','Ready'].includes(o.status))) return false;
+    if(S.orderTab==='Active' && !ACTIVE.includes(o.status)) return false;
+    if(S.orderTab==='Today' && !(o.deliveryDate===t && ACTIVE.includes(o.status))) return false;
     if(STATUSES.includes(S.orderTab) && o.status!==S.orderTab) return false;
     if(q && !((o.customer||'')+' '+(o.phone||'')+' '+(o.no||'')+' '+itemsText(o)).toLowerCase().includes(q)) return false;
     return true;
@@ -487,14 +531,14 @@ function vOrders(){
   const done = ['Delivered','Cancelled'].includes(S.orderTab) || S.orderTab==='All';
   list.sort((a,b)=> done ? (b.deliveryDate||'').localeCompare(a.deliveryDate||'') : (a.deliveryDate+(a.deliveryTime||'')).localeCompare(b.deliveryDate+(b.deliveryTime||'')));
   let h = pageTop('Orders', '<input class="in search" id="orderSearch" placeholder="Search name, phone, order no…" value="'+esc(S.orderSearch)+'"><button class="btn pri" data-act="newOrder">'+I.plus+'New order</button>');
-  h += '<div class="tabs">' + ['Active','Today','Pending','Baking','Ready','Delivered','Cancelled','All'].map(k=>'<button class="tab'+(S.orderTab===k?' on':'')+'" data-otab="'+k+'">'+(STATUS_LABEL[k]||k)+'<span class="c">'+(counts[k]||0)+'</span></button>').join('') + '</div>';
+  h += '<div class="tabs">' + ['New','Active','Today','Pending','Baking','Ready','Delivered','Cancelled','All'].map(k=>(k==='New'&&!counts.New?'':'<button class="tab'+(S.orderTab===k?' on':'')+'" data-otab="'+k+'"'+(k==='New'?' style="background:#1b5fc1;color:#fff;border-color:#1b5fc1"':'')+'>'+(k==='New'?'🌐 ':'')+(STATUS_LABEL[k]||k)+'<span class="c">'+(counts[k]||0)+'</span></button>')).join('') + '</div>';
   if(!list.length) return h + '<div class="card">'+emptyBox(S.orders.length?'No orders match this filter.':'No orders yet. Add your first cake order!')+'</div>';
   h += '<div class="olist">' + list.map(o=>{
     const tot = orderTotal(o), paid = orderPaid(o), bal = Math.max(0,tot-paid);
-    const cls = ['Pending','Baking','Ready'].includes(o.status) ? (o.deliveryDate<t?'late':o.deliveryDate===t?'today':'') : '';
+    const cls = ACTIVE.includes(o.status) ? (o.deliveryDate<t?'late':o.deliveryDate===t?'today':'') : '';
     const cake = o.cake||{};
     const cakeLine = [cake.flavor, cake.weight, cake.shape].filter(Boolean).join(' · ');
-    return '<div class="card oc"><div class="h"><div style="flex:1"><b>'+esc(o.customer)+'</b><div class="no">'+esc(o.no)+' · '+esc(o.phone||'no phone')+'</div></div>'+statusPill(o.status)+'</div>' +
+    return '<div class="card oc"><div class="h"><div style="flex:1"><b>'+esc(o.customer)+'</b><div class="no">'+(o.source==='online'?'🌐 Online · ':'')+esc(o.no)+' · '+esc(o.phone||'no phone')+'</div></div>'+statusPill(o.status)+'</div>' +
       '<div class="meta"><div>🎂 '+esc(itemsText(o))+'</div>'+(cakeLine?'<div>'+esc(cakeLine)+'</div>':'')+(cake.message?'<div>✍️ “'+esc(cake.message)+'”</div>':'')+
       '<div class="'+cls+'">📅 '+esc(o.type||'Pickup')+': '+(o.deliveryDate===t?'Today':niceDate(o.deliveryDate))+' '+niceTime(o.deliveryTime)+(cls==='late'?' (overdue)':'')+'</div>'+(o.type==='Delivery'&&o.address?'<div>📍 '+esc(o.address)+'</div>':'')+(o.notes?'<div>📝 '+esc(o.notes)+'</div>':'')+'</div>' +
       '<div class="money"><div>Total<b>'+fmt(tot)+'</b></div><div>Paid<b>'+fmt(paid)+'</b></div><div>Balance<b style="color:'+(bal>0?'var(--bad)':'var(--ok)')+'">'+(bal>0?fmt(bal):'Paid ✓')+'</b></div></div>' +
@@ -569,16 +613,6 @@ function vReports(){
 }
 
 /* ---------- Products ---------- */
-function vProducts(){
-  let h = pageTop('Menu & Prices', '<button class="btn pri" data-act="newProduct">'+I.plus+'Add item</button>');
-  if(!S.products.length) return h + '<div class="card">'+emptyBox('Add your cakes, pastries, breads and cookies with prices. They will appear as quick picks when you take orders.')+'<div style="text-align:center"><button class="btn" data-act="seedProducts">Add sample bakery menu</button></div></div>';
-  const cats = {}; S.products.forEach(p=>{ (cats[p.category||'Other'] ||= []).push(p); });
-  Object.keys(cats).sort().forEach(c=>{
-    h += '<div class="card sec"><h2>'+esc(c)+'</h2><div class="tw"><table class="tbl"><tbody>'+cats[c].sort((a,b)=>a.name.localeCompare(b.name)).map(p=>'<tr><td><b>'+esc(p.name)+'</b>'+(p.unit?'<div class="hint">per '+esc(p.unit)+'</div>':'')+'</td><td class="num">'+fmt(p.price)+'</td><td class="num"><button class="btn sm ghost" data-act="editProduct" data-id="'+p.id+'">'+I.edit+'</button></td></tr>').join('')+'</tbody></table></div></div>';
-  });
-  return h;
-}
-
 /* ---------- Customers ---------- */
 function custKey(o){ return waNumber(o.phone) || String(o.customer||o.name||'').toLowerCase(); }
 function birthdayFor(o){ const k = custKey(o); if(!k) return ''; const c = S.customers.find(x=>custKey(x)===k); return (c && c.birthday) || ''; }
@@ -670,7 +704,9 @@ function notifPlugin(){ return window.Capacitor && Capacitor.isNativePlatform &&
 async function scheduleNotifs(){
   const LN = notifPlugin(); if(!LN || !Object.values(S.loaded).every(Boolean)) return;
   try{
-    const perm = await LN.checkPermissions(); if(perm.display!=='granted') return;
+    let perm = await LN.checkPermissions();
+    if(perm.display==='prompt' || perm.display==='prompt-with-rationale'){ if(!localStorage.getItem('sb_asked_notif')){ try{ localStorage.setItem('sb_asked_notif','1'); }catch(e){} perm = await LN.requestPermissions(); } }
+    if(perm.display!=='granted') return;
     const pend = await LN.getPending();
     if(pend.notifications && pend.notifications.length) await LN.cancel({notifications: pend.notifications.map(n=>({id:n.id}))});
     const ss = sentSet(), list = [];
@@ -680,6 +716,8 @@ async function scheduleNotifs(){
       const at = new Date(day+'T09:00:00'); if(at <= new Date()) continue;
       list.push({id:2000+i, title:'🎂 '+(S.config.shopName||'Sunrise Bakery'), body: items.length+' customer'+(items.length>1?'s':'')+' to message today: '+items.slice(0,3).map(r=>r.name).join(', ')+(items.length>3?'…':''), schedule:{at}});
     }
+    const lowNow = lowItems();
+    if(lowNow.length && S.config.lowStockNotif!==false) for(let i=0;i<7;i++){ const at = new Date(addDays(today(), i)+'T08:00:00'); if(at<=new Date()) continue; list.push({id:3000+i, title:'⚠️ Low stock – '+(S.config.shopName||'Sunrise Bakery'), body:lowNow.length+' ingredient'+(lowNow.length>1?'s':'')+' low or finished: '+lowNow.slice(0,4).map(g=>g.name).join(', ')+(lowNow.length>4?'…':''), schedule:{at}}); }
     if(list.length) await LN.schedule({notifications:list});
   }catch(e){}
 }
@@ -688,7 +726,7 @@ async function scheduleNotifs(){
 function vBackup(){
   let h = pageTop('Backup & Restore');
   h += '<div class="grid two"><div class="card"><h2>Download a backup</h2><p class="hint" style="font-size:14px">Saves all orders, transactions, menu and settings into one file. Keep it on your phone, Google Drive or a pen drive. Do this at least once a week.</p>'+
-    '<div class="grid kpis" style="margin:14px 0">'+kpi('Orders',S.orders.length)+kpi('Transactions',S.txns.length)+kpi('Menu items',S.products.length)+'</div>'+
+    '<div class="grid kpis" style="margin:14px 0">'+kpi('Orders',S.orders.length)+kpi('Transactions',S.txns.length)+kpi('Menu items',S.products.length)+kpi('Ingredients',S.ingredients.length)+'</div>'+
     '<div class="row"><button class="btn pri" data-act="backup">'+I.backup+'Download backup (.json)</button><button class="btn" data-act="copyBackup">Copy backup text</button></div>'+
     (S.config.lastBackup?'<p class="hint">Last backup: '+esc(new Date(S.config.lastBackup).toLocaleString())+'</p>':'<p class="hint">No backup taken yet.</p>')+'</div>';
   h += '<div class="card"><h2>Restore from backup</h2><p class="hint" style="font-size:14px">Choose a backup file you downloaded earlier. <b>Merge</b> adds missing records and updates existing ones. <b>Replace</b> deletes everything first.</p>'+
@@ -716,7 +754,7 @@ function vSettings(){
     '<label class="f full">😊 Thank-you after delivery<textarea class="in" name="tplThanks" rows="4">'+esc(c.tplThanks)+'</textarea></label>'+
     '<label class="chk full"><input type="checkbox" name="autoReady" '+(c.autoReady!==false?'checked':'')+'> Open the WhatsApp “cake ready” message automatically when an order is marked Ready</label>'+
     '<label class="chk full"><input type="checkbox" name="autoConfirm" '+(c.autoConfirm!==false?'checked':'')+'> Offer the order confirmation message after saving a new order</label>'+
-    '</div><div class="ft" style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px"><button type="button" class="btn" data-act="resetTpl">Reset templates</button><button class="btn pri" type="submit">Save settings</button></div></form>';
+    '</div>'+onlineSettingsHtml()+'<div class="ft" style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px"><button type="button" class="btn" data-act="resetTpl">Reset templates</button><button class="btn pri" type="submit">Save settings</button></div></form>';
   let hasCfg = false; try{ hasCfg = !!JSON.parse(localStorage.getItem('sb_firebase_cfg')||'null'); }catch(e){}
   h += '<div class="card sec"><h2>☁️ Cloud sync (share between phones)</h2><p class="hint" style="font-size:14px">Status: <b>'+(S.mode==='online'?'Connected — all phones share the same data':hasCfg?'Saved, reconnecting…':'Not connected (data stays on this phone)')+'</b></p>'+
     (S.mode==='online'?'':'<p class="hint" style="font-size:14px">Create a free Firebase project (see the setup guide), then paste its <b>firebaseConfig</b> block here.</p><label class="f">Paste firebaseConfig<textarea class="in" id="cloudCfg" rows="6" placeholder=\'const firebaseConfig = { apiKey: "...", authDomain: "...", projectId: "...", appId: "..." };\'></textarea></label>')+
@@ -726,7 +764,7 @@ function vSettings(){
 
 function vMore(){
   let h = pageTop('More');
-  h += '<div class="grid" style="grid-template-columns:1fr 1fr">' + VIEWS.filter(v=>!['dashboard','orders','money','reports'].includes(v[0])).map(([k,l,ic])=>'<button class="card btn" style="flex-direction:column;padding:20px;height:auto" data-go="'+k+'">'+ic+l+'</button>').join('') + '</div>';
+  h += '<div class="grid" style="grid-template-columns:1fr 1fr">' + VIEWS.filter(v=>!['dashboard','orders','money','reports','inventory'].includes(v[0])).map(([k,l,ic])=>'<button class="card btn" style="flex-direction:column;padding:20px;height:auto" data-go="'+k+'">'+ic+l+'</button>').join('') + '</div>';
   return h;
 }
 
@@ -743,7 +781,7 @@ function orderForm(o){
   const isNew = !o;
   o = o || {id:uid(), no:genOrderNo(), customer:'', phone:'', items:[{name:'',qty:1,price:''}], cake:{}, deliveryDate:today(), deliveryTime:'', type:'Pickup', address:'', discount:0, deliveryCharge:0, status:'Pending', notes:''};
   const c = o.cake||{};
-  const prodOpts = S.products.map(p=>'<option value="'+esc(p.name)+'">').join('');
+  const prodOpts = menuOptions().map(p=>'<option value="'+esc(p.label)+'">').join('');
   openModal('<h2>'+(isNew?'New order':'Edit order '+esc(o.no))+'</h2><form id="oForm"><div class="fg">'+
     '<label class="f">Customer name *<input class="in" name="customer" required value="'+esc(o.customer)+'" list="custList"></label>'+
     '<label class="f">Phone (WhatsApp)<input class="in" name="phone" inputmode="tel" value="'+esc(o.phone)+'" placeholder="98XXXXXXXX"></label>'+
@@ -779,7 +817,8 @@ function orderForm(o){
   box.addEventListener('input', e=>{
     const el = e.target; if(!el.dataset.k) return; const i = +el.dataset.i;
     items[i][el.dataset.k] = el.value;
-    if(el.dataset.k==='name'){ const p = S.products.find(p=>p.name.toLowerCase()===el.value.trim().toLowerCase()); if(p && !num(items[i].price)){ items[i].price = p.price; box.querySelector('[data-i="'+i+'"][data-k="price"]').value = p.price; } }
+    if(el.dataset.k==='name'){ const op = menuOptions().find(x=>x.label.toLowerCase()===el.value.trim().toLowerCase()); delete items[i].menuId; delete items[i].kg; delete items[i].extraId;
+      if(op){ items[i].price = op.price; if(op.menuId) items[i].menuId = op.menuId; if(op.kg) items[i].kg = op.kg; if(op.extraId) items[i].extraId = op.extraId; box.querySelector('[data-i="'+i+'"][data-k="price"]').value = op.price; } }
     sum();
   });
   box.addEventListener('click', e=>{ const r = e.target.closest('[data-rm]'); if(r){ items.splice(+r.dataset.rm,1); if(!items.length) items=[{name:'',qty:1,price:''}]; drawItems(); } });
@@ -791,7 +830,7 @@ function orderForm(o){
   f.onsubmit = async ev => {
     ev.preventDefault();
     const fd = new FormData(f);
-    const clean = items.filter(i=>String(i.name).trim()).map(i=>({name:String(i.name).trim(), qty:num(i.qty)||1, price:num(i.price)}));
+    const clean = items.filter(i=>String(i.name).trim()).map(i=>({name:String(i.name).trim(), qty:num(i.qty)||1, price:num(i.price), ...(i.menuId?{menuId:i.menuId}:{}), ...(i.kg?{kg:i.kg}:{}), ...(i.extraId?{extraId:i.extraId}:{})}));
     if(!clean.length){ toast('Add at least one item'); return; }
     const rec = {...o, customer:fd.get('customer').trim(), phone:fd.get('phone').trim(), items:clean,
       cake:{flavor:fd.get('flavor').trim(), weight:fd.get('weight').trim(), shape:fd.get('shape').trim(), message:fd.get('message').trim()},
@@ -887,25 +926,15 @@ function txnForm(x, type){
     if(isNew) rec.createdAt = new Date().toISOString();
     try{ await put('txns', rec); toast('Saved ✓'); closeModal(); }catch(e){} };
 }
-function productForm(p){
-  const isNew = !p; p = p || {id:uid(), name:'', category:'Cakes', price:'', unit:''};
-  openModal('<h2>'+(isNew?'Add menu item':'Edit item')+'</h2><form id="pf"><div class="fg">'+
-    '<label class="f">Name *<input class="in" name="name" required value="'+esc(p.name)+'"></label>'+
-    '<label class="f">Category<input class="in" name="category" list="pcat" value="'+esc(p.category)+'"></label>'+
-    '<label class="f">Price *<input type="number" min="0" step="any" class="in" name="price" required value="'+esc(p.price)+'"></label>'+
-    '<label class="f">Unit<input class="in" name="unit" value="'+esc(p.unit)+'" placeholder="lb, piece, box"></label></div>'+
-    '<datalist id="pcat">'+['Cakes','Pastries','Breads','Cookies','Snacks','Drinks','Custom'].map(c=>'<option value="'+c+'">').join('')+'</datalist>'+
-    '<div class="ft">'+(!isNew?'<button type="button" class="btn danger" id="delP">'+I.trash+'Delete</button><span class="sp"></span>':'')+'<button type="button" class="btn" data-close="1">Cancel</button><button class="btn pri" type="submit">Save</button></div></form>');
-  if(!isNew) $('#delP').onclick = ()=> confirmBox('Delete '+esc(p.name)+' from the menu?', 'Delete', async ()=>{ try{ await del('products', p.id); }catch(e){} });
-  $('#pf').onsubmit = async ev => { ev.preventDefault(); const fd = new FormData(ev.target);
-    try{ await put('products', {...p, name:fd.get('name').trim(), category:fd.get('category').trim()||'Other', price:num(fd.get('price')), unit:fd.get('unit').trim()}); toast('Saved ✓'); closeModal(); }catch(e){} };
-}
-
 /* ============ Status change ============ */
 async function setStatus(id, s){
   const o = S.orders.find(x=>x.id===id); if(!o) return;
   const rec = {...o, status:s}; if(s==='Ready') rec.readyAt = new Date().toISOString(); if(s==='Delivered') rec.deliveredAt = new Date().toISOString();
-  try{ await put('orders', rec); }catch(e){ return; }
+  try{
+    if(['Baking','Ready','Delivered'].includes(s) && !o.stockUsed){ const d = await deductStock(o); if(d) Object.assign(rec, d); }
+    else if(s==='Cancelled' && o.stockUsed){ const d = await restoreStock(o); if(d) Object.assign(rec, d); }
+    await put('orders', rec);
+  }catch(e){ return; }
   if(s==='Ready'){
     toast('Marked ready 🎂');
     if(S.config.autoReady!==false) waModal(rec, 'tplReady', '🎂 Send “cake ready” message');
@@ -917,7 +946,7 @@ async function setStatus(id, s){
 }
 
 /* ============ Backup / restore / export ============ */
-function backupJSON(){ return JSON.stringify({app:'sunrise-bakery', version:1, exportedAt:new Date().toISOString(), config:S.config, products:S.products, customers:S.customers, reminders:S.reminders, orders:S.orders, txns:S.txns}, null, 1); }
+function backupJSON(){ return JSON.stringify({app:'sunrise-bakery', version:1, exportedAt:new Date().toISOString(), config:S.config, products:S.products, ingredients:S.ingredients, extras:S.extras, stockLog:S.stockLog, customers:S.customers, reminders:S.reminders, orders:S.orders, txns:S.txns}, null, 1); }
 async function saveFile(name, data){
   const cap = window.Capacitor;
   if(cap && cap.isNativePlatform && cap.isNativePlatform() && cap.Plugins && cap.Plugins.Filesystem && cap.Plugins.Share){
@@ -941,10 +970,10 @@ async function doRestore(mode){
     openModal('<h2>Restoring…</h2><p id="rProg">Please keep this page open.</p>');
     try{
       if(mode==='replace'){
-        for(const k of ['orders','txns','products','customers','reminders']){ for(const r of [...S[k]]){ await del(k, r.id); } }
+        for(const k of ['orders','txns','products','customers','reminders','ingredients','extras','stockLog']){ for(const r of [...S[k]]){ await del(k, r.id); } }
       }
       let n = 0; const total = (data.orders||[]).length+(data.txns||[]).length+(data.products||[]).length;
-      for(const k of ['products','customers','orders','txns','reminders']){
+      for(const k of ['products','ingredients','extras','customers','orders','txns','reminders','stockLog']){
         for(const r of (data[k]||[])){ if(r && r.id){ await put(k, {...r}); n++; if(n%10===0){ const p = $('#rProg'); if(p) p.textContent = 'Restored '+n+' of '+total+'…'; } } }
       }
       if(data.config) await putConfig(data.config);
@@ -962,11 +991,348 @@ function reportSummary(){
   return '📊 '+(S.config.shopName)+' report\n'+niceDate(from)+' – '+niceDate(to)+'\n\nIncome: '+fmt(ti)+'\nExpense: '+fmt(te)+'\n'+(ti-te>=0?'Profit: ':'Loss: ')+fmt(ti-te)+'\nOrders: '+ords.length+' (value '+fmt(ords.reduce((a,o)=>a+orderTotal(o),0))+')';
 }
 
+/* ============ Starter data (menu, stock, recipes) ============ */
+const PHOTOS = [['img/cakes/vanilla.jpg','Vanilla cake'],['img/cakes/pineapple.jpg','Pineapple cake'],['img/cakes/blackforest.jpg','Black Forest cake'],['img/cakes/whiteforest.jpg','White Forest cake'],['img/cakes/butterscotch.jpg','Butterscotch cake'],['img/cakes/truffle.jpg','Chocolate truffle cake'],['img/cakes/redvelvet.jpg','Red velvet cake'],['img/cakes/mango.jpg','Mango cake'],['img/cakes/fruit.jpg','Fresh fruit cake'],['img/cakes/photo.jpg','Photo cake'],['img/cakes/pastry-choc.jpg','Chocolate pastry'],['img/cakes/pastry-pine.jpg','Pineapple pastry'],['img/cakes/pastry-bf.jpg','Black Forest pastry'],['img/cakes/cupcake.jpg','Cupcake'],['img/cakes/brownie.jpg','Brownie'],['img/cakes/donut.jpg','Doughnut'],['img/cakes/cookies.jpg','Cookies'],['img/cakes/bread.jpg','Bread']];
+const SEED = {
+  ingredients: [
+    ['flour','Maida (flour)','kg',25,8,75],['sugar','Sugar','kg',20,6,115],['icing','Icing sugar','kg',5,2,150],['butter','Butter','kg',8,3,950],['oil','Cooking oil','L',10,3,240],
+    ['eggs','Eggs','piece',120,40,20],['milk','Milk','L',15,5,115],['cream','Whipping cream','L',10,3,750],['cocoa','Cocoa powder','kg',3,1,1300],['darkchoc','Dark chocolate','kg',5,2,700],
+    ['whitechoc','White chocolate','kg',3,1,750],['bpowder','Baking powder','g',1000,300,0.5],['bsoda','Baking soda','g',500,150,0.3],['vanilla','Vanilla essence','ml',500,100,1.8],['rvcolour','Red velvet colour','ml',200,50,6],
+    ['pineapple','Pineapple (tin)','tin',6,2,380],['cherries','Cherries','kg',2,0.5,1100],['bscrunch','Butterscotch crunch','kg',2,0.5,900],['mango','Mango pulp','kg',6,2,380],['fruits','Fresh fruits','kg',5,2,350],
+    ['jam','Jam / glaze','kg',3,1,420],['yeast','Yeast','g',500,150,0.8],['box','Cake box','piece',40,15,45],['board','Cake board','piece',60,20,15],['candles','Candles (pack)','pack',20,8,40],
+    ['photosheet','Edible photo sheet','piece',20,5,120],['pbox','Pastry / cookie box','piece',60,20,20],['liner','Cupcake liners','piece',200,60,2]
+  ].map(a=>({id:'i-'+a[0],name:a[1],unit:a[2],stock:a[3],low:a[4],cost:a[5]})),
+  extras: [['eggless','Eggless option',150],['photo','Photo print on cake',400,'photosheet',1],['candles','Extra candles (pack)',50,'candles',1],['sparkler','Sparkler candle',80],['topper','Happy Birthday topper',250],['giftbox','Premium gift box',200],['knife','Knife & plates set',100]]
+    .map(a=>({id:'x-'+a[0],name:a[1],price:a[2],online:true,ing:a[3]?'i-'+a[3]:'',ingQty:a[4]||0})),
+  products(){
+    const base = [['flour',.30],['sugar',.22],['butter',.12],['eggs',3],['milk',.12],['bpowder',7],['vanilla',4],['cream',.28],['box',1,1],['board',1,1],['candles',.1,1]];
+    const cake = (key,name,desc,prices,extra)=>({id:'p-'+key,name,category:'Cakes',kind:'cake',unit:'kg',price:prices[1],photo:'img/cakes/'+key+'.jpg',desc,online:true,active:true,
+      sizes:[{label:'0.5 kg',kg:.5,price:prices[0]},{label:'1 kg',kg:1,price:prices[1]},{label:'2 kg',kg:2,price:prices[2]}],
+      recipe: base.concat(extra||[]).map(r=>({ing:'i-'+r[0],qty:r[1],fixed:!!r[2]}))});
+    const piece = (key,name,cat,price,desc,rec,photo)=>({id:'p-'+key,name,category:cat,kind:'piece',unit:'piece',price,photo:'img/cakes/'+(photo||key)+'.jpg',desc,online:true,active:true,sizes:[],recipe:rec.map(r=>({ing:'i-'+r[0],qty:r[1],fixed:false}))});
+    return [
+      cake('vanilla','Vanilla Cake','Soft vanilla sponge layered with fresh whipped cream and strawberries.',[650,1200,2300]),
+      cake('pineapple','Pineapple Cake','Light sponge, pineapple pieces and cream – a bakery favourite.',[700,1300,2500],[['pineapple',.5],['cherries',.02]]),
+      cake('blackforest','Black Forest Cake','Chocolate sponge, cream and cherries, covered in chocolate shavings.',[750,1400,2700],[['cocoa',.04],['darkchoc',.12],['cherries',.05]]),
+      cake('whiteforest','White Forest Cake','Vanilla sponge with white chocolate shavings and cherries.',[750,1400,2700],[['whitechoc',.15],['cherries',.03]]),
+      cake('butterscotch','Butterscotch Cake','Caramel cream with crunchy butterscotch praline.',[750,1400,2700],[['bscrunch',.08]]),
+      cake('truffle','Chocolate Truffle Cake','Rich chocolate ganache, truffle balls and chocolate curls.',[900,1700,3300],[['cocoa',.06],['darkchoc',.30]]),
+      cake('redvelvet','Red Velvet Cake','Velvety red sponge with cream cheese style frosting.',[1000,1900,3700],[['rvcolour',15],['cocoa',.02]]),
+      cake('mango','Mango Cake','Fresh mango cream and mango glaze (seasonal).',[800,1500,2900],[['mango',.35]]),
+      cake('fruit','Fresh Fruit Cake','Vanilla sponge topped with seasonal fresh fruits.',[850,1600,3100],[['fruits',.25],['jam',.05]]),
+      cake('photo','Photo Cake','Your favourite picture printed on a soft vanilla cake.',[1000,1800,3400],[['photosheet',1,1]]),
+      piece('pastry-choc','Chocolate Pastry','Pastries',130,'Moist chocolate pastry with cream.',[['flour',.04],['sugar',.03],['butter',.02],['eggs',.5],['cream',.04],['cocoa',.01],['pbox',.25]]),
+      piece('pastry-pine','Pineapple Pastry','Pastries',120,'Pineapple pastry with fresh cream.',[['flour',.04],['sugar',.03],['butter',.02],['eggs',.5],['cream',.04],['pineapple',.03],['pbox',.25]]),
+      piece('pastry-bf','Black Forest Pastry','Pastries',130,'Classic Black Forest slice with cherry.',[['flour',.04],['sugar',.03],['butter',.02],['eggs',.5],['cream',.04],['darkchoc',.01],['cherries',.005],['pbox',.25]]),
+      piece('cupcake','Cupcake','Pastries',80,'Soft cupcake with creamy frosting.',[['flour',.05],['sugar',.04],['butter',.03],['eggs',.7],['icing',.03],['liner',1]]),
+      piece('brownie','Chocolate Brownie','Pastries',120,'Fudgy chocolate brownie.',[['flour',.03],['sugar',.05],['cocoa',.02],['darkchoc',.04],['butter',.03],['eggs',.5],['pbox',.25]]),
+      piece('donut','Doughnut','Bakery',90,'Soft ring doughnut with icing and sprinkles.',[['flour',.06],['sugar',.02],['yeast',3],['oil',.03],['milk',.02],['icing',.02]],'donut'),
+      piece('cookies','Butter Cookies (box)','Bakery',350,'Crisp homemade butter cookies, one box.',[['flour',.2],['butter',.12],['sugar',.1],['pbox',1]]),
+      piece('bread','Milk Bread Loaf','Bakery',100,'Fresh soft milk bread, baked daily.',[['flour',.4],['yeast',6],['sugar',.02],['milk',.1],['butter',.02]])
+    ];
+  }
+};
+
+/* ============ Menu, stock & online-order helpers ============ */
+const fmtQ = n => { const v = Math.round(num(n)*100)/100; return v.toLocaleString('en-IN'); };
+const ACTIVE = ['New','Pending','Baking','Ready'];
+function canon(o){ if(Array.isArray(o)) return '['+o.map(canon).join(',')+']'; if(o && typeof o==='object') return '{'+Object.keys(o).sort().filter(k=>o[k]!==undefined).map(k=>JSON.stringify(k)+':'+canon(o[k])).join(',')+'}'; return JSON.stringify(o); }
+function ingById(id){ return S.ingredients.find(i=>i.id===id); }
+function lowItems(){ return S.ingredients.filter(i=>num(i.low)>0 && num(i.stock)<=num(i.low)); }
+function newOnline(){ return S.orders.filter(o=>o.status==='New'); }
+function photoOf(p){ return p.photo || 'img/cakes/vanilla.jpg'; }
+function menuOptions(){
+  const o = [];
+  S.products.filter(p=>p.active!==false).forEach(p=>{
+    if(p.kind==='cake' && p.sizes && p.sizes.length) p.sizes.forEach(z=>o.push({label:p.name+' ('+z.label+')', price:z.price, menuId:p.id, kg:z.kg}));
+    else o.push({label:p.name, price:p.price, menuId:p.id, kg:0});
+  });
+  S.extras.forEach(x=>o.push({label:'Extra: '+x.name, price:x.price, extraId:x.id}));
+  return o;
+}
+function recipeUsage(o){
+  const u = {};
+  (o.items||[]).forEach(it=>{
+    const q = num(it.qty)||1;
+    const p = it.menuId ? S.products.find(x=>x.id===it.menuId) : null;
+    if(p && p.recipe) p.recipe.forEach(r=>{ const mult = p.kind==='cake' ? (r.fixed ? 1 : (num(it.kg)||1)) : 1; u[r.ing] = (u[r.ing]||0) + num(r.qty)*mult*q; });
+    const x = it.extraId ? S.extras.find(e=>e.id===it.extraId) : null;
+    if(x && x.ing) u[x.ing] = (u[x.ing]||0) + (num(x.ingQty)||1)*q;
+  });
+  return u;
+}
+function needMap(){ const m = {}; S.orders.filter(o=>o.status==='Pending' && !o.stockUsed).forEach(o=>{ const u = recipeUsage(o); for(const k in u) m[k] = (m[k]||0)+u[k]; }); return m; }
+function sizeOk(p, kg){ return !(p.recipe||[]).some(r=>{ const ing = ingById(r.ing); if(!ing) return false; const need = num(r.qty)*(p.kind==='cake' ? (r.fixed?1:(kg||1)) : 1); return num(ing.stock) < need; }); }
+function beep(){ try{ const a = new (window.AudioContext||window.webkitAudioContext)(), o = a.createOscillator(), g = a.createGain(); o.connect(g); g.connect(a.destination); o.frequency.value = 880; g.gain.setValueAtTime(.15,a.currentTime); o.start(); o.stop(a.currentTime+.25); }catch(e){} }
+function pushNote(title, body){ const LN = notifPlugin(); if(!LN) return; try{ LN.schedule({notifications:[{id:4000+Math.floor(Math.random()*90000), title, body, schedule:{at:new Date(Date.now()+1500)}}]}).catch(()=>{}); }catch(e){} }
+function lowStockAlert(ing, after){
+  toast('⚠️ '+(after<=0?'OUT OF STOCK: ':'Low stock: ')+ing.name+' ('+fmtQ(after)+' '+ing.unit+' left)'); beep();
+  if(S.config.lowStockNotif!==false) pushNote('⚠️ '+(after<=0?'Out of stock – ':'Low stock – ')+ing.name, (after<=0?'Finished! ':'Only '+fmtQ(after)+' '+ing.unit+' left. ')+'Please buy more.');
+}
+async function adjustStock(ingId, delta, reason, note, orderId, extra){
+  const ing = ingById(ingId); if(!ing) return;
+  const before = num(ing.stock), after = Math.round((before+delta)*1000)/1000;
+  if(S.mode==='online'){
+    try{ await fast(db.collection('ingredients').doc(ingId).update({stock:firebase.firestore.FieldValue.increment(delta), updatedAt:new Date().toISOString(), ...(extra||{})})); }catch(e){ handleWriteErr(e); throw e; }
+  } else { ing.stock = after; Object.assign(ing, extra||{}); lsSave(); }
+  try{ await put('stockLog', {id:uid(), at:new Date().toISOString(), date:today(), ingId, ingName:ing.name, unit:ing.unit, delta, after, reason, note:note||'', orderId:orderId||''}); }catch(e){}
+  if(delta<0 && num(ing.low)>0 && before>num(ing.low) && after<=num(ing.low)) lowStockAlert(ing, after);
+  if(S.mode!=='online') render();
+}
+async function deductStock(o){
+  if(o.stockUsed) return null;
+  const u = recipeUsage(o), keys = Object.keys(u).filter(k=>ingById(k));
+  for(const k of keys) await adjustStock(k, -u[k], 'order', 'Order '+o.no, o.id);
+  return {stockUsed:Object.fromEntries(keys.map(k=>[k, Math.round(u[k]*1000)/1000]))};
+}
+async function restoreStock(o){
+  if(!o.stockUsed) return null;
+  for(const [k,q] of Object.entries(o.stockUsed)) if(ingById(k)) await adjustStock(k, +q, 'restore', 'Cancelled '+o.no, o.id);
+  return {stockUsed:null};
+}
+function resizeImg(file, w, h, q){
+  return new Promise((res,rej)=>{ const fr = new FileReader(); fr.onerror = rej; fr.onload = () => { const im = new Image(); im.onerror = rej; im.onload = () => { const c = document.createElement('canvas'); const sc = Math.min(w/im.width, h/im.height, 1); c.width = Math.round(im.width*sc); c.height = Math.round(im.height*sc); c.getContext('2d').drawImage(im,0,0,c.width,c.height); res(c.toDataURL('image/jpeg', q)); }; im.src = fr.result; }; fr.readAsDataURL(file); });
+}
+async function seedAll(){
+  try{
+    toast('Setting up your menu, stock and recipes… please wait');
+    const hi = new Set(S.ingredients.map(x=>x.id)), hp = new Set(S.products.map(x=>x.id)), he = new Set(S.extras.map(x=>x.id));
+    const prods = SEED.products(), names = new Set(prods.map(p=>p.name.toLowerCase()));
+    for(const p of S.products.filter(p=>!p.kind && names.has(String(p.name).toLowerCase()))) await del('products', p.id);
+    for(const i of SEED.ingredients) if(!hi.has(i.id)) await put('ingredients', {...i});
+    for(const p of prods) if(!hp.has(p.id)) await put('products', p);
+    for(const x of SEED.extras) if(!he.has(x.id)) await put('extras', {...x});
+    const cfg = {seeded:true}; if(!S.config.shopAddress) cfg.shopAddress = 'Changunarayan MC'; await putConfig(cfg);
+    toast('Ready ✓ Now check your prices and update the real stock quantities.');
+  }catch(e){}
+}
+
+/* ============ Publishing the public menu for the online order page ============ */
+let _pubT;
+function schedPub(){ clearTimeout(_pubT); _pubT = setTimeout(publishMenu, 4000); }
+function pubDesired(){
+  const docs = {}, cats = [];
+  S.products.filter(p=>p.active!==false && p.online!==false).forEach(p=>{
+    if(!cats.includes(p.category||'Other')) cats.push(p.category||'Other');
+    const d = {id:p.id, name:p.name, category:p.category||'Other', kind:p.kind||'piece', desc:p.desc||'', photo:photoOf(p), unit:p.unit||'', price:num(p.price), ok:true, sizes:[]};
+    if(p.kind==='cake' && p.sizes && p.sizes.length){ d.sizes = p.sizes.map(z=>({label:z.label, kg:num(z.kg), price:num(z.price), ok:sizeOk(p, num(z.kg))})); d.ok = d.sizes.some(z=>z.ok); }
+    else d.ok = sizeOk(p, 1);
+    docs[p.id] = d;
+  });
+  const c = S.config;
+  const info = {shopName:c.shopName||'', phone:c.shopPhone||'', address:c.shopAddress||'', hours:c.openHours||'', welcome:c.welcomeText||'', minNoticeDays:num(c.minNoticeDays), enabled:c.onlineEnabled!==false,
+    payNote:c.payNote||'', payBank:c.payBank||'', payQr:c.payQr||'', advancePercent:num(c.advancePercent), currency:c.currency||'Rs.', categories:cats,
+    extras:S.extras.filter(x=>x.online!==false).map(x=>({id:x.id,name:x.name,price:num(x.price)}))};
+  return {docs, info};
+}
+async function publishMenu(){
+  if(S.mode!=='online' || S.readOnly || !Object.values(S.loaded).every(Boolean) || !S.pub.ready) return;
+  const {docs, info} = pubDesired();
+  try{
+    for(const id in docs) if(canon(docs[id]) !== canon(S.pub.menu[id]||null)) await fast(db.collection('pubMenu').doc(id).set(JSON.parse(JSON.stringify(docs[id]))));
+    for(const id in S.pub.menu) if(!docs[id]) await fast(db.collection('pubMenu').doc(id).delete());
+    if(canon(info) !== canon(S.pub.info||null)) await fast(db.doc('pubInfo/shop').set(JSON.parse(JSON.stringify(info))));
+  }catch(e){}
+}
+
+/* ============ Inventory ============ */
+function vInventory(){
+  const need = needMap(), low = lowItems(), out = S.ingredients.filter(i=>num(i.stock)<=0);
+  let h = pageTop('Inventory & Stock', '<button class="btn" data-act="enableNotif">🔔 Alerts on</button><button class="btn pri" data-act="newIng">'+I.plus+'Add ingredient</button>');
+  if(!S.ingredients.length) return h + '<div class="card">'+emptyBox('Set up your stock first. Load the starter list (flour, sugar, butter, cream, eggs, boxes…), then update the quantities to match your shop.')+'<div style="text-align:center"><button class="btn pri" data-act="seedAll">Load starter menu, stock & recipes</button></div></div>';
+  const value = S.ingredients.reduce((a,i)=>a+num(i.stock)*num(i.cost),0);
+  h += '<div class="grid kpis">'+kpi('Ingredients', S.ingredients.length)+kpi('Low stock', '<span'+(low.length?' class="late"':'')+'>'+low.length+'</span>', low.length?'Buy these soon':'All good')+kpi('Out of stock', '<span'+(out.length?' class="late"':'')+'>'+out.length+'</span>')+kpi('Stock value', fmt(value), 'At your cost prices')+'</div>';
+  if(low.length) h += '<div class="banner alert" style="margin-top:14px">⚠️ <b>Buy soon:</b> '+low.slice(0,8).map(i=>esc(i.name)+' ('+fmtQ(i.stock)+' '+esc(i.unit)+')').join(', ')+(low.length>8?'…':'')+'</div>';
+  const tab = S.invTab||'all', q = (S.invSearch||'').trim().toLowerCase();
+  let list = S.ingredients.filter(i=>(tab==='all'||(tab==='low'&&num(i.low)>0&&num(i.stock)<=num(i.low))||(tab==='out'&&num(i.stock)<=0)) && (!q||i.name.toLowerCase().includes(q)));
+  list.sort((a,b)=>{ const sa = num(a.low)>0 ? num(a.stock)/num(a.low) : 99, sb = num(b.low)>0 ? num(b.stock)/num(b.low) : 99; return sa-sb || a.name.localeCompare(b.name); });
+  h += '<div class="row sec" style="margin-bottom:12px"><div class="tabs" style="margin:0">'+[['all','All',S.ingredients.length],['low','Low',low.length],['out','Out',out.length]].map(([k,l,n])=>'<button class="tab'+(tab===k?' on':'')+'" data-itab="'+k+'">'+l+'<span class="c">'+n+'</span></button>').join('')+'</div><span class="sp"></span><input class="in search" id="invSearch" placeholder="Search ingredient…" value="'+esc(S.invSearch||'')+'"></div>';
+  h += '<div class="card"><div class="tw"><table class="tbl"><thead><tr><th>Ingredient</th><th>In stock</th><th class="num">Alert at</th><th class="num">Pending orders need</th><th></th></tr></thead><tbody>' +
+    list.map(i=>{
+      const st = num(i.stock), lo = num(i.low), pct = lo>0 ? Math.min(100, st/(lo*3)*100) : 100, cls = st<=0 ? 'bad' : (lo>0&&st<=lo) ? 'bad' : (lo>0&&st<=lo*1.5) ? 'warn' : 'ok';
+      const n = need[i.id]||0;
+      return '<tr><td><b>'+esc(i.name)+'</b>'+(st<=0?' <span class="pill st-Cancelled">Out</span>':(lo>0&&st<=lo)?' <span class="pill st-Pending">Low</span>':'')+'</td><td style="min-width:130px"><b>'+fmtQ(st)+'</b> '+esc(i.unit)+'<div class="sbar"><i class="'+cls+'" style="width:'+Math.max(3,pct)+'%"></i></div></td><td class="num">'+fmtQ(lo)+' '+esc(i.unit)+'</td><td class="num">'+(n?'<span class="'+(n>st?'late':'')+'">'+fmtQ(n)+' '+esc(i.unit)+(n>st?' ⚠ short':'')+'</span>':'—')+'</td><td class="num" style="white-space:nowrap"><button class="btn sm" data-act="stockIn" data-id="'+i.id+'">+ Buy</button> <button class="btn sm" data-act="stockOut" data-id="'+i.id+'">− Use</button> <button class="btn sm ghost" data-act="editIng" data-id="'+i.id+'">'+I.edit+'</button></td></tr>';
+    }).join('') + '</tbody></table></div></div>';
+  const log = S.stockLog.slice().sort((a,b)=>String(b.at).localeCompare(String(a.at))).slice(0,12);
+  if(log.length) h += '<div class="card sec"><h2>Recent stock movements</h2><div class="tw"><table class="tbl"><tbody>'+log.map(l=>'<tr><td>'+niceDate(l.date)+'</td><td><b>'+esc(l.ingName)+'</b><div class="hint">'+esc(l.note||l.reason)+'</div></td><td class="num '+(l.delta>=0?'inc':'exp')+'">'+(l.delta>=0?'+':'')+fmtQ(l.delta)+' '+esc(l.unit)+'</td><td class="num hint">left '+fmtQ(l.after)+'</td></tr>').join('')+'</tbody></table></div></div>';
+  return h;
+}
+function ingForm(ing){
+  const isNew = !ing; ing = ing || {id:uid(), name:'', unit:'kg', stock:'', low:'', cost:''};
+  openModal('<h2>'+(isNew?'Add ingredient':'Edit ingredient')+'</h2><form id="igf"><div class="fg">'+
+    '<label class="f full">Name *<input class="in" name="name" required value="'+esc(ing.name)+'" placeholder="Flour, Butter, Cream…"></label>'+
+    '<label class="f">Unit *<input class="in" name="unit" list="units" required value="'+esc(ing.unit)+'"></label>'+
+    '<label class="f">Stock now ('+esc(ing.unit||'unit')+')<input class="in" type="number" step="any" min="0" name="stock" value="'+esc(ing.stock)+'"></label>'+
+    '<label class="f">Alert me when stock is at or below<input class="in" type="number" step="any" min="0" name="low" value="'+esc(ing.low)+'"></label>'+
+    '<label class="f">Cost per unit (optional)<input class="in" type="number" step="any" min="0" name="cost" value="'+esc(ing.cost)+'"></label></div>'+
+    '<datalist id="units">'+['kg','g','L','ml','piece','pack','tin','box','dozen'].map(u=>'<option value="'+u+'">').join('')+'</datalist>'+
+    '<div class="ft">'+(!isNew?'<button type="button" class="btn danger" id="delIng">'+I.trash+'Delete</button><span class="sp"></span>':'')+'<button type="button" class="btn" data-close="1">Cancel</button><button class="btn pri" type="submit">Save</button></div></form>');
+  if(!isNew) $('#delIng').onclick = ()=> confirmBox('Delete <b>'+esc(ing.name)+'</b> from stock? Recipes that use it will ignore it.', 'Delete', async ()=>{ try{ await del('ingredients', ing.id); }catch(e){} });
+  $('#igf').onsubmit = async ev => { ev.preventDefault(); const fd = new FormData(ev.target);
+    const rec = {...ing, name:fd.get('name').trim(), unit:fd.get('unit').trim(), low:num(fd.get('low')), cost:num(fd.get('cost'))};
+    const ns = num(fd.get('stock'));
+    try{
+      if(isNew){ rec.stock = ns; await put('ingredients', rec); }
+      else { rec.stock = num(ing.stock); await put('ingredients', rec); if(Math.abs(ns-num(ing.stock))>0.0005) await adjustStock(ing.id, ns-num(ing.stock), 'count', 'Stock count'); }
+      toast('Saved ✓'); closeModal();
+    }catch(e){}
+  };
+}
+function stockModal(ing, mode){
+  const isIn = mode==='in';
+  openModal('<h2>'+(isIn?'➕ Stock received – ':'➖ Stock used / wasted – ')+esc(ing.name)+'</h2><p class="hint" style="margin-top:-6px">Now in stock: <b>'+fmtQ(ing.stock)+' '+esc(ing.unit)+'</b></p><form id="stf"><div class="fg">'+
+    '<label class="f">Quantity ('+esc(ing.unit)+') *<input class="in" type="number" step="any" min="0" name="qty" required autofocus></label>'+
+    (isIn ? '<label class="f">Total price paid (optional)<input class="in" type="number" step="any" min="0" name="cost"></label><label class="chk full"><input type="checkbox" name="expense" checked> Also add this to Expenses (Ingredients)</label>'
+          : '<label class="f">Reason<select class="in" name="why"><option>Used in kitchen</option><option>Wastage / spoiled</option><option>Other</option></select></label>')+
+    '<label class="f full">Note (optional)<input class="in" name="note" placeholder="'+(isIn?'Supplier, bill no…':'')+'"></label></div>'+
+    '<div class="ft"><button type="button" class="btn" data-close="1">Cancel</button><button class="btn pri" type="submit">Save</button></div></form>');
+  $('#stf').onsubmit = async ev => { ev.preventDefault(); const fd = new FormData(ev.target); const q = num(fd.get('qty')); if(q<=0){ toast('Enter a quantity'); return; }
+    try{
+      if(isIn){
+        const cost = num(fd.get('cost'));
+        await adjustStock(ing.id, q, 'purchase', fd.get('note')||'Purchase', '', cost>0 ? {cost:Math.round(cost/q*100)/100} : null);
+        if(cost>0 && fd.get('expense')) await put('txns', {id:uid(), type:'expense', category:EXP_CATS[0], amount:cost, method:'Cash', date:today(), note:'Bought '+fmtQ(q)+' '+ing.unit+' '+ing.name+(fd.get('note')?' · '+fd.get('note'):''), createdAt:new Date().toISOString()});
+      } else await adjustStock(ing.id, -q, 'use', (fd.get('why')||'')+(fd.get('note')?' · '+fd.get('note'):''));
+      toast(isIn?'Stock added ✓':'Stock updated ✓'); closeModal();
+    }catch(e){}
+  };
+}
+
+/* ============ Cake menu ============ */
+function priceText(p){ if(p.sizes && p.sizes.length){ const ps = p.sizes.map(z=>num(z.price)); return fmt(Math.min(...ps))+(ps.length>1?' – '+fmt(Math.max(...ps)):''); } return fmt(p.price)+(p.unit?' / '+esc(p.unit):''); }
+function vProducts(){
+  let h = pageTop('Cake Menu', '<button class="btn" data-act="newExtra">'+I.plus+'Add extra</button><button class="btn pri" data-act="newProduct">'+I.plus+'Add item</button>');
+  if(!S.products.length) return h + '<div class="card">'+emptyBox('Build your menu: cakes with sizes & prices, pastries and more. Each item can have a photo, recipe and online-ordering switch.')+'<div style="text-align:center"><button class="btn pri" data-act="seedAll">Load starter menu, stock & recipes</button></div></div>';
+  const cats = {}; S.products.forEach(p=>{ (cats[p.category||'Other'] ||= []).push(p); });
+  Object.keys(cats).sort((a,b)=>(a==='Cakes'?-1:b==='Cakes'?1:a.localeCompare(b))).forEach(c=>{
+    h += '<h2 class="sec" style="font-size:19px">'+esc(c)+'</h2><div class="mgrid">'+cats[c].sort((a,b)=>a.name.localeCompare(b.name)).map(p=>{
+      const hasRec = (p.recipe||[]).length, ok = hasRec ? (p.kind==='cake' ? sizeOk(p, num(p.sizes&&p.sizes[0]&&p.sizes[0].kg)||1) : sizeOk(p,1)) : true;
+      return '<div class="mc'+(p.active===false?' off':'')+'" data-act="editProduct" data-id="'+p.id+'"><img class="ph" loading="lazy" src="'+esc(photoOf(p))+'" alt=""><div class="mb"><b>'+esc(p.name)+'</b><div class="pr">'+priceText(p)+'</div><div class="tags">'+
+        (p.active===false?'<span class="tg">Hidden</span>':(p.online!==false?'<span class="tg on">🌐 Online</span>':'<span class="tg">Shop only</span>'))+
+        (hasRec?(ok?'<span class="tg ok">Stock OK</span>':'<span class="tg bad">Low stock</span>'):'<span class="tg">No recipe</span>')+'</div></div></div>';
+    }).join('')+'</div>';
+  });
+  h += '<div class="card sec"><div class="row" style="margin-bottom:8px"><h2 style="margin:0">Extras & add-ons</h2><span class="sp"></span><button class="btn sm" data-act="newExtra">'+I.plus+'Add</button></div>'+
+    (S.extras.length?'<div class="tw"><table class="tbl"><tbody>'+S.extras.map(x=>'<tr><td><b>'+esc(x.name)+'</b>'+(x.ing&&ingById(x.ing)?'<div class="hint">uses '+fmtQ(x.ingQty||1)+' '+esc(ingById(x.ing).unit)+' '+esc(ingById(x.ing).name)+'</div>':'')+'</td><td>'+(x.online!==false?'<span class="tg on">🌐 Online</span>':'<span class="tg">Shop only</span>')+'</td><td class="num">'+fmt(x.price)+'</td><td class="num"><button class="btn sm ghost" data-act="editExtra" data-id="'+x.id+'">'+I.edit+'</button></td></tr>').join('')+'</tbody></table></div>':'<p class="hint">No extras yet (photo print, candles, eggless…).</p>')+'</div>';
+  return h;
+}
+function productForm(p){
+  const isNew = !p;
+  p = p ? JSON.parse(JSON.stringify(p)) : {id:uid(), name:'', category:'Cakes', kind:'cake', unit:'kg', price:'', photo:'img/cakes/vanilla.jpg', desc:'', sizes:[{label:'0.5 kg',kg:.5,price:''},{label:'1 kg',kg:1,price:''},{label:'2 kg',kg:2,price:''}], recipe:[], online:true, active:true};
+  if(!p.kind) p.kind = (p.sizes && p.sizes.length) ? 'cake' : 'piece';
+  p.sizes = p.sizes||[]; p.recipe = p.recipe||[];
+  if(p.kind==='cake' && !p.sizes.length) p.sizes = [{label:'1 kg',kg:1,price:p.price||''}];
+  const phOpts = PHOTOS.map(([v,l])=>'<option value="'+v+'"'+(p.photo===v?' selected':'')+'>'+l+'</option>').join('')+(p.photo && !PHOTOS.some(x=>x[0]===p.photo)?'<option value="'+esc(p.photo)+'" selected>My own photo</option>':'');
+  openModal('<h2>'+(isNew?'Add menu item':'Edit '+esc(p.name))+'</h2><form id="pf"><div class="fg">'+
+    '<label class="f">Name *<input class="in" name="name" required value="'+esc(p.name)+'"></label>'+
+    '<label class="f">Category<input class="in" name="category" list="pcat" value="'+esc(p.category)+'"></label>'+
+    '<label class="f">Sold as<select class="in" name="kind"><option value="cake"'+(p.kind==='cake'?' selected':'')+'>Cake by weight (sizes)</option><option value="piece"'+(p.kind!=='cake'?' selected':'')+'>Single piece / box</option></select></label>'+
+    '<label class="f" id="unitBox">Unit<input class="in" name="unit" value="'+esc(p.kind==='cake'?'':p.unit)+'" placeholder="piece, box…"></label>'+
+    '<label class="f full">Short description (shown to customers)<input class="in" name="desc" maxlength="140" value="'+esc(p.desc)+'"></label>'+
+    '<div class="full phrow"><img id="phPrev" class="phprev" src="'+esc(photoOf(p))+'" alt=""><div style="flex:1"><label class="f">Photo<select class="in" id="phSel">'+phOpts+'</select></label><label class="f" style="margin-top:8px">…or upload your own photo<input type="file" accept="image/*" class="in" id="phFile"></label></div></div>'+
+    '<div class="full" id="pricePart"></div>'+
+    '<div class="full"><div class="f" style="font-size:13px;font-weight:600;color:var(--ink2);margin-bottom:4px">Recipe <span class="hint" id="recHint"></span></div><div id="recBox"></div><button type="button" class="btn sm" id="addRec">'+I.plus+'Add ingredient</button><div class="hint" id="costLine" style="margin-top:8px"></div></div>'+
+    '<label class="chk"><input type="checkbox" name="online" '+(p.online!==false?'checked':'')+'> Show on online order page</label><label class="chk"><input type="checkbox" name="active" '+(p.active!==false?'checked':'')+'> Active (untick to hide everywhere)</label></div>'+
+    '<datalist id="pcat">'+['Cakes','Pastries','Bakery','Cookies','Snacks','Drinks'].map(c=>'<option value="'+c+'">').join('')+'</datalist>'+
+    '<div class="ft">'+(!isNew?'<button type="button" class="btn danger" id="delP">'+I.trash+'Delete</button><span class="sp"></span>':'')+'<button type="button" class="btn" data-close="1">Cancel</button><button class="btn pri" type="submit">Save</button></div></form>');
+  const f = $('#pf');
+  const drawPrice = () => {
+    const cake = f.kind.value==='cake'; p.kind = cake?'cake':'piece'; $('#unitBox').style.display = cake?'none':'';
+    $('#pricePart').innerHTML = cake ? '<div class="f" style="font-size:13px;font-weight:600;color:var(--ink2);margin-bottom:4px">Sizes & prices</div>'+p.sizes.map((z,i)=>'<div class="it sz"><input class="in" data-s="'+i+'" data-k="label" placeholder="1 kg" value="'+esc(z.label)+'"><input class="in" type="number" step="any" min="0" data-s="'+i+'" data-k="kg" placeholder="kg" value="'+esc(z.kg)+'"><input class="in" type="number" min="0" data-s="'+i+'" data-k="price" placeholder="Price" value="'+esc(z.price)+'"><button type="button" class="btn sm ghost" data-rs="'+i+'">✕</button></div>').join('')+'<button type="button" class="btn sm" id="addSize">'+I.plus+'Add size</button>'
+      : '<label class="f">Price *<input class="in" type="number" step="any" min="0" name="price" value="'+esc(p.price)+'"></label>';
+    $('#recHint').textContent = cake ? '(amounts for 1 kg of cake; tick “per cake” for boxes, boards, candles)' : '(amounts for 1 piece)';
+    drawRec();
+  };
+  const drawRec = () => {
+    const cake = p.kind==='cake';
+    $('#recBox').innerHTML = p.recipe.map((r,i)=>{ const ing = ingById(r.ing); return '<div class="it rc"><select class="in" data-r="'+i+'" data-k="ing"><option value="">Ingredient…</option>'+S.ingredients.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(g=>'<option value="'+g.id+'"'+(g.id===r.ing?' selected':'')+'>'+esc(g.name)+'</option>').join('')+'</select><input class="in" type="number" step="any" min="0" data-r="'+i+'" data-k="qty" placeholder="Qty" value="'+esc(r.qty)+'"><span class="hint" style="align-self:center;min-width:34px">'+(ing?esc(ing.unit):'')+'</span>'+(cake?'<label class="chk" style="font-size:12px"><input type="checkbox" data-r="'+i+'" data-k="fixed" '+(r.fixed?'checked':'')+'>per cake</label>':'<span></span>')+'<button type="button" class="btn sm ghost" data-rr="'+i+'">✕</button></div>'; }).join('') || '<p class="hint">No recipe yet. Add ingredients so stock goes down automatically when an order starts baking.</p>';
+    drawCost();
+  };
+  const drawCost = () => {
+    const cake = p.kind==='cake'; const c1 = p.recipe.reduce((a,r)=>{ const g = ingById(r.ing); return a + (g&&!(cake&&r.fixed) ? num(r.qty)*num(g.cost) : 0); },0), cf = cake ? p.recipe.reduce((a,r)=>{ const g = ingById(r.ing); return a + (g&&r.fixed ? num(r.qty)*num(g.cost) : 0); },0) : 0;
+    const sell = cake ? num((p.sizes.find(z=>num(z.kg)===1)||p.sizes[0]||{}).price) : num(f.price && f.price.value);
+    const tot = c1+(cake?cf:0);
+    $('#costLine').innerHTML = tot>0 ? 'Ingredient cost ≈ <b>'+fmt(tot)+'</b> '+(cake?'for 1 kg':'per piece')+(sell>0 ? ' · selling '+fmt(sell)+' · margin ≈ <b>'+Math.round((sell-tot)/sell*100)+'%</b>' : '') : '';
+  };
+  f.addEventListener('change', e=>{ if(e.target.name==='kind') drawPrice(); });
+  f.addEventListener('input', e=>{ const el = e.target;
+    if(el.dataset.s!==undefined){ p.sizes[+el.dataset.s][el.dataset.k] = el.value; drawCost(); }
+    else if(el.dataset.r!==undefined){ const r = p.recipe[+el.dataset.r]; r[el.dataset.k] = el.type==='checkbox' ? el.checked : el.value; if(el.dataset.k==='ing') drawRec(); else drawCost(); }
+    else if(el.name==='price') drawCost(); });
+  f.addEventListener('click', e=>{
+    const rs = e.target.closest('[data-rs]'); if(rs){ p.sizes.splice(+rs.dataset.rs,1); drawPrice(); return; }
+    const rr = e.target.closest('[data-rr]'); if(rr){ p.recipe.splice(+rr.dataset.rr,1); drawRec(); return; }
+    if(e.target.id==='addSize'){ p.sizes.push({label:'',kg:'',price:''}); drawPrice(); }
+  });
+  $('#addRec').onclick = ()=>{ p.recipe.push({ing:'',qty:'',fixed:false}); drawRec(); };
+  $('#phSel').onchange = e=>{ p.photo = e.target.value; $('#phPrev').src = p.photo; };
+  $('#phFile').onchange = async e=>{ const fl = e.target.files[0]; if(!fl) return; try{ p.photo = await resizeImg(fl, 560, 420, .82); $('#phPrev').src = p.photo; toast('Photo added'); }catch(err){ toast('Could not read that photo'); } };
+  if(!isNew) $('#delP').onclick = ()=> confirmBox('Delete '+esc(p.name)+' from the menu?', 'Delete', async ()=>{ try{ await del('products', p.id); }catch(e){} });
+  drawPrice();
+  f.onsubmit = async ev => { ev.preventDefault(); const fd = new FormData(f); const cake = f.kind.value==='cake';
+    const rec = {...p, name:fd.get('name').trim(), category:fd.get('category').trim()||'Other', kind:f.kind.value, desc:fd.get('desc').trim(), online:!!fd.get('online'), active:!!fd.get('active')};
+    rec.recipe = p.recipe.filter(r=>r.ing && num(r.qty)>0).map(r=>({ing:r.ing, qty:num(r.qty), fixed:!!r.fixed}));
+    if(cake){
+      rec.sizes = p.sizes.filter(z=>String(z.label).trim() && num(z.price)>0).map(z=>({label:String(z.label).trim(), kg:num(z.kg)||1, price:num(z.price)}));
+      if(!rec.sizes.length){ toast('Add at least one size with a price'); return; }
+      rec.unit = 'kg'; rec.price = (rec.sizes.find(z=>z.kg===1)||rec.sizes[0]).price;
+    } else {
+      rec.sizes = []; rec.price = num(fd.get('price')); rec.unit = (fd.get('unit')||'piece').trim() || 'piece';
+      if(!(rec.price>0)){ toast('Enter a price'); return; }
+    }
+    try{ await put('products', rec); toast('Saved ✓'); closeModal(); }catch(e){}
+  };
+}
+function extraForm(x){
+  const isNew = !x; x = x || {id:uid(), name:'', price:'', online:true, ing:'', ingQty:''};
+  openModal('<h2>'+(isNew?'Add extra':'Edit extra')+'</h2><form id="xf"><div class="fg"><label class="f full">Name *<input class="in" name="name" required value="'+esc(x.name)+'" placeholder="Photo print, extra candles…"></label>'+
+    '<label class="f">Price *<input class="in" type="number" min="0" step="any" name="price" required value="'+esc(x.price)+'"></label>'+
+    '<label class="chk" style="align-self:end"><input type="checkbox" name="online" '+(x.online!==false?'checked':'')+'> Show online</label>'+
+    '<label class="f">Uses stock of (optional)<select class="in" name="ing"><option value="">— none —</option>'+S.ingredients.map(g=>'<option value="'+g.id+'"'+(g.id===x.ing?' selected':'')+'>'+esc(g.name)+'</option>').join('')+'</select></label>'+
+    '<label class="f">Quantity used<input class="in" type="number" min="0" step="any" name="ingQty" value="'+esc(x.ingQty)+'"></label></div>'+
+    '<div class="ft">'+(!isNew?'<button type="button" class="btn danger" id="delX">'+I.trash+'Delete</button><span class="sp"></span>':'')+'<button type="button" class="btn" data-close="1">Cancel</button><button class="btn pri" type="submit">Save</button></div></form>');
+  if(!isNew) $('#delX').onclick = ()=> confirmBox('Delete this extra?', 'Delete', async ()=>{ try{ await del('extras', x.id); }catch(e){} });
+  $('#xf').onsubmit = async ev => { ev.preventDefault(); const fd = new FormData(ev.target); try{ await put('extras', {...x, name:fd.get('name').trim(), price:num(fd.get('price')), online:!!fd.get('online'), ing:fd.get('ing')||'', ingQty:num(fd.get('ingQty'))}); toast('Saved ✓'); closeModal(); }catch(e){} };
+}
+
+/* ============ Online orders ============ */
+async function acceptOnline(id){
+  const o = S.orders.find(x=>x.id===id); if(!o) return;
+  const rec = {...o, status:'Pending', acceptedAt:new Date().toISOString()};
+  try{ await put('orders', rec); try{ await upsertCustomer(o.customer, o.phone, ''); }catch(e){} }catch(e){ return; }
+  toast('Order accepted ✓'); waModal(rec, 'tplOnlineAccept', '✅ Confirm to customer on WhatsApp');
+}
+function declineOnline(id){
+  const o = S.orders.find(x=>x.id===id); if(!o) return;
+  confirmBox('Decline online order <b>'+esc(o.no)+'</b> from '+esc(o.customer)+'?', 'Decline order', async ()=>{
+    try{ const rec = {...o, status:'Cancelled'}; await put('orders', rec); toast('Order declined'); if(waNumber(o.phone)) waModal(rec, 'tplDecline', 'Tell the customer'); }catch(e){}
+  });
+}
+function onlineSettingsHtml(){
+  const c = S.config;
+  return '<h2 style="margin-top:22px">🌐 Online ordering page</h2><p class="hint">Customers open your order link, choose cakes and send an order. It appears in <b>Orders → New online</b>.</p><div class="fg">'+
+    '<label class="chk full"><input type="checkbox" name="onlineEnabled" '+(c.onlineEnabled!==false?'checked':'')+'> Accept online orders (untick to close the page)</label>'+
+    '<label class="f full">Your order page link<input class="in" name="orderUrl" value="'+esc(c.orderUrl)+'"></label>'+
+    '<div class="full row"><button type="button" class="btn sm" data-act="copyOrderUrl">Copy link</button><button type="button" class="btn sm wa" data-act="shareOrderUrl">'+I.wa+'Share on WhatsApp</button><a class="btn sm" target="_blank" rel="noopener" href="'+esc(c.orderUrl)+'">Open page</a></div>'+
+    '<label class="f">Minimum notice (days)<input class="in" type="number" min="0" name="minNoticeDays" value="'+esc(c.minNoticeDays)+'"></label>'+
+    '<label class="f">Advance to pay (%)<input class="in" type="number" min="0" max="100" name="advancePercent" value="'+esc(c.advancePercent)+'"></label>'+
+    '<label class="f full">Opening hours<input class="in" name="openHours" value="'+esc(c.openHours)+'"></label>'+
+    '<label class="f full">Welcome text on the page<textarea class="in" name="welcomeText" rows="2">'+esc(c.welcomeText)+'</textarea></label>'+
+    '<label class="f full">Payment instructions<textarea class="in" name="payNote" rows="3">'+esc(c.payNote)+'</textarea></label>'+
+    '<label class="f full">Bank details (optional – shown with the QR)<textarea class="in" name="payBank" rows="2" placeholder="Bank, account name, account number">'+esc(c.payBank)+'</textarea></label>'+
+    '<label class="f full">Payment QR image path<input class="in" name="payQr" value="'+esc(c.payQr)+'"></label>'+
+    '<label class="f full">✅ Message when you accept an online order<textarea class="in" name="tplOnlineAccept" rows="7">'+esc(c.tplOnlineAccept)+'</textarea></label>'+
+    '<label class="f full">✖ Message when you decline<textarea class="in" name="tplDecline" rows="4">'+esc(c.tplDecline)+'</textarea></label>'+
+    '<label class="chk full"><input type="checkbox" name="lowStockNotif" '+(c.lowStockNotif!==false?'checked':'')+'> Phone alert when an ingredient reaches its low level</label></div>';
+}
+
 /* ============ Events ============ */
 document.addEventListener('click', async e => {
   const t = e.target;
   if(t.closest('[data-close]') && (t.dataset.close || t.closest('button[data-close]'))){ if(t.classList.contains('ov') || t.closest('button[data-close]')){ closeModal(); return; } }
   const g = t.closest('[data-go]'); if(g){ go(g.dataset.go); return; }
+  const nt = t.closest('[data-newtab]'); if(nt){ S.orderTab='New'; go('orders'); return; }
+  const it = t.closest('[data-itab]'); if(it){ S.invTab = it.dataset.itab; render(); return; }
   const ot = t.closest('[data-otab]'); if(ot){ S.orderTab = ot.dataset.otab; render(); return; }
   const tf = t.closest('[data-tfilter]'); if(tf){ S.txnFilter = tf.dataset.tfilter; render(); return; }
   const rg = t.closest('[data-range]'); if(rg){ S.rep.range = rg.dataset.range; render(); return; }
@@ -984,11 +1350,18 @@ document.addEventListener('click', async e => {
     case 'newExpense': txnForm(null,'expense'); break;
     case 'editTxn': { const x = S.txns.find(x=>x.id===id); if(x) txnForm(x); break; }
     case 'newProduct': productForm(); break;
+    case 'seedAll': seedAll(); break;
+    case 'newIng': ingForm(); break;
+    case 'editIng': { const g = ingById(id); if(g) ingForm(g); break; }
+    case 'stockIn': { const g = ingById(id); if(g) stockModal(g,'in'); break; }
+    case 'stockOut': { const g = ingById(id); if(g) stockModal(g,'out'); break; }
+    case 'newExtra': extraForm(); break;
+    case 'editExtra': { const x = S.extras.find(x=>x.id===id); if(x) extraForm(x); break; }
+    case 'acceptOnline': acceptOnline(id); break;
+    case 'declineOnline': declineOnline(id); break;
+    case 'copyOrderUrl': try{ await navigator.clipboard.writeText(S.config.orderUrl); toast('Link copied ✓'); }catch(err){ toast('Copy not allowed here — select the link and copy'); } break;
+    case 'shareOrderUrl': window.open('https://wa.me/?text='+encodeURIComponent('🎂 Order fresh cakes from '+(S.config.shopName||'Sunrise Bakery')+' online:\n'+S.config.orderUrl), '_blank'); break;
     case 'editProduct': { const p = S.products.find(p=>p.id===id); if(p) productForm(p); break; }
-    case 'seedProducts': {
-      const sample = [['Black Forest Cake','Cakes',900,'lb'],['White Forest Cake','Cakes',900,'lb'],['Red Velvet Cake','Cakes',1200,'lb'],['Chocolate Truffle Cake','Cakes',1100,'lb'],['Fresh Fruit Cake','Cakes',1000,'lb'],['Photo Cake','Cakes',1500,'lb'],['Pastry (assorted)','Pastries',120,'piece'],['Chocolate Brownie','Pastries',100,'piece'],['Doughnut','Pastries',80,'piece'],['Bread Loaf','Breads',90,'piece'],['Brown Bread','Breads',110,'piece'],['Butter Cookies','Cookies',350,'box'],['Chicken Patties','Snacks',90,'piece'],['Veg Puff','Snacks',60,'piece']];
-      try{ for(const [n,c,p,u] of sample) await put('products',{id:uid(),name:n,category:c,price:p,unit:u}); toast('Sample menu added — edit prices to match yours'); }catch(e){}
-      break; }
     case 'backup': { const ok = await saveFile('sunrise-bakery-backup-'+today()+'.json', backupJSON()); if(ok){ toast('Backup downloaded ✓'); try{ await putConfig({lastBackup:new Date().toISOString()}); }catch(e){} } break; }
     case 'copyBackup': try{ await navigator.clipboard.writeText(backupJSON()); toast('Backup copied — paste it into a note or email to yourself'); try{ await putConfig({lastBackup:new Date().toISOString()}); }catch(e){} }catch(err){ toast('Copy not allowed here — use Download'); } break;
     case 'restore': doRestore(a.dataset.mode); break;
@@ -1015,15 +1388,16 @@ document.addEventListener('click', async e => {
       let j = null; try{ j = JSON.parse(localStorage.getItem(LS_KEY)||'null'); }catch(err){}
       if(!j || !((j.orders||[]).length||(j.txns||[]).length||(j.products||[]).length)){ toast('No older data on this phone to upload.'); break; }
       toast('Uploading…'); let n = 0;
-      try{ for(const k of ['products','customers','orders','txns','reminders']){ for(const r of (j[k]||[])){ if(r && r.id){ await put(k, {...r}); n++; } } } toast('Uploaded '+n+' records to the cloud ✓'); }
+      try{ for(const k of ['products','ingredients','extras','customers','orders','txns','reminders','stockLog']){ for(const r of (j[k]||[])){ if(r && r.id){ await put(k, {...r}); n++; } } } toast('Uploaded '+n+' records to the cloud ✓'); }
       catch(err){ toast('Upload stopped — try again with internet.'); }
       break; }
-    case 'resetTpl': confirmBox('Reset all WhatsApp templates to default?', 'Reset', async ()=>{ try{ await putConfig({tplReady:DEFAULT_CONFIG.tplReady,tplConfirm:DEFAULT_CONFIG.tplConfirm,tplThanks:DEFAULT_CONFIG.tplThanks,tplReminder:DEFAULT_CONFIG.tplReminder,tplBirthday:DEFAULT_CONFIG.tplBirthday,tplAnniv:DEFAULT_CONFIG.tplAnniv}); toast('Templates reset'); }catch(e){} }); break;
+    case 'resetTpl': confirmBox('Reset all WhatsApp templates to default?', 'Reset', async ()=>{ try{ await putConfig({tplReady:DEFAULT_CONFIG.tplReady,tplConfirm:DEFAULT_CONFIG.tplConfirm,tplThanks:DEFAULT_CONFIG.tplThanks,tplReminder:DEFAULT_CONFIG.tplReminder,tplBirthday:DEFAULT_CONFIG.tplBirthday,tplAnniv:DEFAULT_CONFIG.tplAnniv,tplOnlineAccept:DEFAULT_CONFIG.tplOnlineAccept,tplDecline:DEFAULT_CONFIG.tplDecline}); toast('Templates reset'); }catch(e){} }); break;
   }
 });
 document.addEventListener('input', e => {
   if(e.target.id==='orderSearch'){ S.orderSearch = e.target.value; render(); }
   if(e.target.id==='txnSearch'){ S.txnSearch = e.target.value; render(); }
+  if(e.target.id==='invSearch'){ S.invSearch = e.target.value; render(); }
 });
 document.addEventListener('change', e => {
   if(e.target.id==='repFrom'){ S.rep.from = e.target.value; render(); }
@@ -1032,7 +1406,8 @@ document.addEventListener('change', e => {
 document.addEventListener('submit', async e => {
   if(e.target.id==='setForm'){
     e.preventDefault(); const fd = new FormData(e.target);
-    const cfg = {}; ['shopName','shopPhone','shopAddress','currency','tplReady','tplConfirm','tplReminder','tplThanks','tplBirthday','tplAnniv'].forEach(k=>cfg[k]=String(fd.get(k)||''));
+    const cfg = {}; ['shopName','shopPhone','shopAddress','currency','tplReady','tplConfirm','tplReminder','tplThanks','tplBirthday','tplAnniv','tplOnlineAccept','tplDecline','orderUrl','openHours','welcomeText','payNote','payBank','payQr'].forEach(k=>{ if(fd.has(k)) cfg[k]=String(fd.get(k)||''); });
+    cfg.onlineEnabled = !!fd.get('onlineEnabled'); cfg.lowStockNotif = !!fd.get('lowStockNotif'); cfg.minNoticeDays = num(fd.get('minNoticeDays')); cfg.advancePercent = num(fd.get('advancePercent'));
     cfg.autoReady = !!fd.get('autoReady'); cfg.autoConfirm = !!fd.get('autoConfirm');
     try{ await putConfig(cfg); toast('Settings saved ✓'); }catch(err){}
   }

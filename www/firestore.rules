@@ -1,7 +1,26 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Only signed-in bakery staff can read or write
+
+    // Public menu for the online order page: anyone can read, only staff can write
+    match /pubMenu/{id} { allow read: if true; allow write: if request.auth != null; }
+    match /pubInfo/{id} { allow read: if true; allow write: if request.auth != null; }
+
+    // Customers may only CREATE a new online order (status "New"); they cannot read or change orders
+    match /orders/{id} {
+      allow create: if request.auth != null || (
+        request.resource.data.keys().hasOnly(['id','no','customer','phone','items','cake','deliveryDate','deliveryTime','type','address','discount','deliveryCharge','status','notes','source','createdAt'])
+        && request.resource.data.status == 'New'
+        && request.resource.data.source == 'online'
+        && request.resource.data.customer is string && request.resource.data.customer.size() > 0 && request.resource.data.customer.size() < 80
+        && request.resource.data.phone is string && request.resource.data.phone.size() < 20
+        && request.resource.data.items is list && request.resource.data.items.size() > 0 && request.resource.data.items.size() <= 30
+        && request.resource.data.notes is string && request.resource.data.notes.size() < 700
+      );
+      allow read, update, delete: if request.auth != null;
+    }
+
+    // Everything else: signed-in bakery staff only
     match /{document=**} {
       allow read, write: if request.auth != null;
     }
