@@ -1,5 +1,5 @@
 {
-  "appId": "com.sunrise.bakery",
+  "appId": "com.sunrisebakery.manager",
   "appName": "Sunrise Bakery",
   "webDir": "www",
   "android": { "allowMixedContent": false },

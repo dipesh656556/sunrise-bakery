@@ -1,4 +1,4 @@
-package com.sunrise.bakery;
+package com.sunrisebakery.manager;
 
 import com.getcapacitor.BridgeActivity;
 
