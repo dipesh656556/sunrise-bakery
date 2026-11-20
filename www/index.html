@@ -214,7 +214,7 @@ const METHODS = ['Cash','eSewa','Khalti','FonePay QR','Bank Transfer','Card'];
 const INC_CATS = ['Order Advance','Order Payment','Counter Sale','Catering','Other Income'];
 const EXP_CATS = ['Ingredients (Flour, Sugar, Butter…)','Dairy & Eggs','Cream & Decorations','Packaging & Boxes','Gas / Fuel','Electricity','Water','Rent','Staff Salary','Delivery / Transport','Marketing & Ads','Equipment & Repair','Other Expense'];
 const DEFAULT_CONFIG = {
-  shopName:'Sunrise Bakery', shopPhone:'', shopAddress:'', currency:'Rs.',
+  shopName:'Sunrise Bakery', shopPhone:'9849353685', shopAddress:'Changunarayan MC', currency:'Rs.',
   tplConfirm:'Namaste {name} 🙏\nThank you for ordering from *{shop}*!\n\n🧾 Order No: {order}\n🎂 Items: {items}\n📅 {type}: {when}\n💰 Total: {cur} {total} | Paid: {cur} {paid} | Balance: {cur} {balance}\n\nWe will message you as soon as it is ready.',
   tplReady:'Namaste {name} 🙏\n\nGood news! Your order *{order}* from *{shop}* is READY 🎂✨\n\nItems: {items}\n{balance_line}\n📅 {type}: {when}\n\nThank you for choosing {shop}! 📞 {shopphone}',
   tplThanks:'Thank you {name} for choosing *{shop}*! 😊\nWe hope everyone enjoyed the {items}.\nWe would love your feedback — and see you again soon! 🎂',
@@ -291,7 +291,7 @@ function toast(msg){
 /* ============ Storage layer (online db, fallback local) ============ */
 const LS_KEY = 'sunrise_bakery_local_v1';
 function lsSave(){ try{ localStorage.setItem(LS_KEY, JSON.stringify({orders:S.orders,txns:S.txns,products:S.products,customers:S.customers,reminders:S.reminders,ingredients:S.ingredients,extras:S.extras,stockLog:S.stockLog,config:S.config})); }catch(e){} }
-function lsLoad(){ try{ const j = JSON.parse(localStorage.getItem(LS_KEY)||'null'); if(j){ S.orders=j.orders||[]; S.txns=j.txns||[]; S.products=j.products||[]; S.customers=j.customers||[]; S.reminders=j.reminders||[]; S.ingredients=j.ingredients||[]; S.extras=j.extras||[]; S.stockLog=j.stockLog||[]; S.config={...DEFAULT_CONFIG,...(j.config||{})}; } }catch(e){} }
+function lsLoad(){ try{ const j = JSON.parse(localStorage.getItem(LS_KEY)||'null'); if(j){ S.orders=j.orders||[]; S.txns=j.txns||[]; S.products=j.products||[]; S.customers=j.customers||[]; S.reminders=j.reminders||[]; S.ingredients=j.ingredients||[]; S.extras=j.extras||[]; S.stockLog=j.stockLog||[]; S.config={...DEFAULT_CONFIG,...(j.config||{})}; ['shopPhone','shopAddress'].forEach(k=>{ if(!S.config[k]) S.config[k]=DEFAULT_CONFIG[k]; }); } }catch(e){} }
 
 const COLS = {orders:'orders', txns:'txns', products:'products', customers:'customers', reminders:'reminders', ingredients:'ingredients', extras:'extras', stockLog:'stockLog'};
 async function put(col, obj){
@@ -373,6 +373,7 @@ async function init(){
   db.doc('pubInfo/shop').onSnapshot(snap=>{ S.pub.info = snap.exists ? snap.data() : null; render(); }, ()=>{});
   db.doc('config/shop').onSnapshot(snap => {
     S.config = {...DEFAULT_CONFIG, ...(snap.exists ? snap.data() : {})};
+    ['shopPhone','shopAddress'].forEach(k=>{ if(!S.config[k]) S.config[k] = DEFAULT_CONFIG[k]; });
     done('config', snap.metadata.fromCache); render();
   }, onErr);
 }
