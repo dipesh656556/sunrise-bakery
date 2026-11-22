@@ -231,8 +231,8 @@ const DEFAULT_CONFIG = {
 
 /* ============ State ============ */
 const S = {
-  view:'dashboard', orders:[], txns:[], products:[], customers:[], reminders:[], ingredients:[], extras:[], stockLog:[], pub:{menu:{},info:null,ready:false}, invTab:'all', invSearch:'', config:{...DEFAULT_CONFIG},
-  mode:'loading', loaded:{orders:false,txns:false,products:false,customers:false,reminders:false,ingredients:false,extras:false,stockLog:false,config:false},
+  view:'dashboard', orders:[], txns:[], products:[], customers:[], reminders:[], ingredients:[], extras:[], stockLog:[], recipes:[], pub:{menu:{},info:null,ready:false}, invTab:'all', invSearch:'', config:{...DEFAULT_CONFIG},
+  mode:'loading', loaded:{orders:false,txns:false,products:false,customers:false,reminders:false,ingredients:false,extras:false,stockLog:false,recipes:false,config:false},
   orderTab:'Active', orderSearch:'', txnFilter:'all', txnSearch:'',
   rep:{range:'month', from:'', to:''}, slow:false, readOnly:false
 };
@@ -290,10 +290,10 @@ function toast(msg){
 
 /* ============ Storage layer (online db, fallback local) ============ */
 const LS_KEY = 'sunrise_bakery_local_v1';
-function lsSave(){ try{ localStorage.setItem(LS_KEY, JSON.stringify({orders:S.orders,txns:S.txns,products:S.products,customers:S.customers,reminders:S.reminders,ingredients:S.ingredients,extras:S.extras,stockLog:S.stockLog,config:S.config})); }catch(e){} }
-function lsLoad(){ try{ const j = JSON.parse(localStorage.getItem(LS_KEY)||'null'); if(j){ S.orders=j.orders||[]; S.txns=j.txns||[]; S.products=j.products||[]; S.customers=j.customers||[]; S.reminders=j.reminders||[]; S.ingredients=j.ingredients||[]; S.extras=j.extras||[]; S.stockLog=j.stockLog||[]; S.config={...DEFAULT_CONFIG,...(j.config||{})}; ['shopPhone','shopAddress'].forEach(k=>{ if(!S.config[k]) S.config[k]=DEFAULT_CONFIG[k]; }); } }catch(e){} }
+function lsSave(){ try{ localStorage.setItem(LS_KEY, JSON.stringify({orders:S.orders,txns:S.txns,products:S.products,customers:S.customers,reminders:S.reminders,ingredients:S.ingredients,extras:S.extras,stockLog:S.stockLog,recipes:S.recipes,config:S.config})); }catch(e){} }
+function lsLoad(){ try{ const j = JSON.parse(localStorage.getItem(LS_KEY)||'null'); if(j){ S.orders=j.orders||[]; S.txns=j.txns||[]; S.products=j.products||[]; S.customers=j.customers||[]; S.reminders=j.reminders||[]; S.ingredients=j.ingredients||[]; S.extras=j.extras||[]; S.stockLog=j.stockLog||[]; S.recipes=j.recipes||[]; S.config={...DEFAULT_CONFIG,...(j.config||{})}; ['shopPhone','shopAddress'].forEach(k=>{ if(!S.config[k]) S.config[k]=DEFAULT_CONFIG[k]; }); } }catch(e){} }
 
-const COLS = {orders:'orders', txns:'txns', products:'products', customers:'customers', reminders:'reminders', ingredients:'ingredients', extras:'extras', stockLog:'stockLog'};
+const COLS = {orders:'orders', txns:'txns', products:'products', customers:'customers', reminders:'reminders', ingredients:'ingredients', extras:'extras', stockLog:'stockLog', recipes:'recipes'};
 async function put(col, obj){
   obj.updatedAt = new Date().toISOString();
   if(S.mode === 'online'){
@@ -361,7 +361,7 @@ async function init(){
   S.mode = 'online';
   const done = (k, fromCache) => { if(!fromCache) S.loaded[k] = true; if(Object.values(S.loaded).every(Boolean)){ ready = true; S.slow = false; clearTimeout(slowT); } };
   const onErr = e => { ready = true; clearTimeout(slowT); if(e && (e.code==='revoked' || e.code==='permission-denied')){ S.mode='revoked'; } toast('Connection problem: some data may be out of date.'); render(); };
-  for(const k of ['orders','txns','products','customers','reminders','ingredients','extras','stockLog']){
+  for(const k of ['orders','txns','products','customers','reminders','ingredients','extras','stockLog','recipes']){
     const ref = k==='stockLog' ? db.collection('stockLog').orderBy('at','desc').limit(200) : db.collection(COLS[k]);
     ref.onSnapshot(snap => {
       if(k==='orders' && S.loaded.orders){ snap.docChanges().forEach(ch=>{ if(ch.type==='added' && !snap.metadata.fromCache && !snap.metadata.hasPendingWrites){ const d = ch.doc.data(); if(d.source==='online' && d.status==='New'){ toast('🌐 New online order from '+(d.customer||'a customer')+'!'); beep(); pushNote('🌐 New online order', (d.customer||'Customer')+' · '+(d.no||'')); } } }); }
@@ -381,7 +381,7 @@ async function init(){
 /* ============ Navigation ============ */
 const VIEWS = [
   ['dashboard','Dashboard',I.home],['orders','Orders',I.orders],['reminders','Reminders',I.bell],['money','Income & Expense',I.money],
-  ['reports','Reports',I.report],['products','Cake Menu',I.menu],['inventory','Inventory & Stock',I.box],['customers','Customers',I.users],
+  ['reports','Reports',I.report],['products','Cake Menu',I.menu],['inventory','Inventory & Stock',I.box],['recipes','Recipe Book',I.menu],['customers','Customers',I.users],
   ['backup','Backup & Restore',I.backup],['settings','Settings',I.gear]
 ];
 const MOBILE = ['dashboard','orders','money','reports','inventory','more'];
@@ -393,7 +393,7 @@ function renderNav(){
     VIEWS.map(([k,l,ic])=>'<button class="nav'+(S.view===k?' on':'')+'" data-go="'+k+'">'+ic+l+(k==='reminders'&&dueReminders().length?'<span class="pill st-Pending" style="margin-left:auto">'+dueReminders().length+'</span>':'')+(k==='orders'&&newOnline().length?'<span class="pill st-New" style="margin-left:auto">'+newOnline().length+' new</span>':'')+(k==='inventory'&&lowItems().length?'<span class="pill st-Cancelled" style="margin-left:auto">'+lowItems().length+'</span>':'')+'</button>').join('') +
     '<div class="foot">'+st+'</div>';
   const mv = {dashboard:['Home',I.home],orders:['Orders',I.orders],money:['Money',I.money],reports:['Reports',I.report],inventory:['Stock',I.box],more:['More',I.menu]};
-  const inMore = ['reminders','products','customers','backup','settings','more'].includes(S.view);
+  const inMore = ['reminders','products','recipes','customers','backup','settings','more'].includes(S.view);
   const bd = {orders:newOnline().length, inventory:lowItems().length};
   $('#bnav').innerHTML = MOBILE.map(k=>'<button class="'+((S.view===k||(k==='more'&&inMore))?'on':'')+'" data-go="'+k+'">'+mv[k][1]+mv[k][0]+(bd[k]?'<i class="bd">'+bd[k]+'</i>':'')+'</button>').join('');
 }
@@ -409,7 +409,7 @@ function render(){
   if(S.slow) h += '<div class="banner">Still connecting to the online database… data shown may be incomplete or out of date.</div>';
   if(S.readOnly) h += '<div class="banner">You have view-only access to this app. Ask the owner for Contributor access to add or change records.</div>';
   if(S.mode==='revoked') h += '<div class="banner">Your account has no permission to read or write bakery data. Check the Firestore rules in the setup guide.</div>';
-  const fn = {dashboard:vDash,orders:vOrders,money:vMoney,reports:vReports,products:vProducts,inventory:vInventory,customers:vCustomers,reminders:vReminders,backup:vBackup,settings:vSettings,more:vMore}[S.view] || vDash;
+  const fn = {dashboard:vDash,orders:vOrders,money:vMoney,reports:vReports,products:vProducts,recipes:vRecipes,inventory:vInventory,customers:vCustomers,reminders:vReminders,backup:vBackup,settings:vSettings,more:vMore}[S.view] || vDash;
   h += fn();
   m.innerHTML = h;
   if(S.view==='reports' || S.view==='dashboard') bindChart();
@@ -947,7 +947,7 @@ async function setStatus(id, s){
 }
 
 /* ============ Backup / restore / export ============ */
-function backupJSON(){ return JSON.stringify({app:'sunrise-bakery', version:1, exportedAt:new Date().toISOString(), config:S.config, products:S.products, ingredients:S.ingredients, extras:S.extras, stockLog:S.stockLog, customers:S.customers, reminders:S.reminders, orders:S.orders, txns:S.txns}, null, 1); }
+function backupJSON(){ return JSON.stringify({app:'sunrise-bakery', version:1, exportedAt:new Date().toISOString(), config:S.config, products:S.products, ingredients:S.ingredients, extras:S.extras, recipes:S.recipes, stockLog:S.stockLog, customers:S.customers, reminders:S.reminders, orders:S.orders, txns:S.txns}, null, 1); }
 async function saveFile(name, data){
   const cap = window.Capacitor;
   if(cap && cap.isNativePlatform && cap.isNativePlatform() && cap.Plugins && cap.Plugins.Filesystem && cap.Plugins.Share){
@@ -971,10 +971,10 @@ async function doRestore(mode){
     openModal('<h2>Restoring…</h2><p id="rProg">Please keep this page open.</p>');
     try{
       if(mode==='replace'){
-        for(const k of ['orders','txns','products','customers','reminders','ingredients','extras','stockLog']){ for(const r of [...S[k]]){ await del(k, r.id); } }
+        for(const k of ['orders','txns','products','customers','reminders','ingredients','extras','stockLog','recipes']){ for(const r of [...S[k]]){ await del(k, r.id); } }
       }
       let n = 0; const total = (data.orders||[]).length+(data.txns||[]).length+(data.products||[]).length;
-      for(const k of ['products','ingredients','extras','customers','orders','txns','reminders','stockLog']){
+      for(const k of ['products','ingredients','extras','recipes','customers','orders','txns','reminders','stockLog']){
         for(const r of (data[k]||[])){ if(r && r.id){ await put(k, {...r}); n++; if(n%10===0){ const p = $('#rProg'); if(p) p.textContent = 'Restored '+n+' of '+total+'…'; } } }
       }
       if(data.config) await putConfig(data.config);
@@ -1327,12 +1327,199 @@ function onlineSettingsHtml(){
     '<label class="chk full"><input type="checkbox" name="lowStockNotif" '+(c.lowStockNotif!==false?'checked':'')+'> Phone alert when an ingredient reaches its low level</label></div>';
 }
 
+/* ============ Recipe Book (your handwritten recipes) ============ */
+const RCATS = ['Bread & Buns','Sponge & Cakes','Muffins','Cookies & Biscuits','Desserts','Fillings, Sauces & Glazes'];
+const RECIPE_SEED = (()=>{
+  const F='few', G='g', ML='ml', PC='pc';
+  const R = (id,name,cat,ings,method,note,check)=>({id:'r-'+id,name,cat,ings:ings.map(a=>({n:a[0],q:a[1],u:a[2]})),method:method||'',note:note||'',check:check||[]});
+  const bread = (id,label,a,chk,note)=>R(id,'Bread / Doughnut dough – '+label,'Bread & Buns',[['Flour',a[0],G],['Sugar',a[1],G],['Salt',a[2],G],['Yeast',a[3],G],['Improver',a[4],G],['Gluten',a[5],G],['Water',a[6],ML],[a[9]||'Butter',a[7],G],['Calcium',a[8],G]],'',note||'',chk);
+  const bread2 = (id,label,a,chk)=>R(id,'Bread dough – '+label,'Bread & Buns',[['Flour',a[0],G],['Sugar',a[1],G],['Salt',a[2],G],['Improver',a[3],G],['Gluten',a[4],G],['Yeast',a[5],G],['Water',a[6],ML],['Oil',a[7],G],['Calcium',a[8],G]],'','Second table on the Bread page (columns: 500 g, 750 g, 3500 g, 3200 g flour). The page does not name the product.',chk);
+  return [
+  bread('bread5','5 kg flour',[5000,500,75,100,50,100,2700,100,15]),
+  bread('bread4','4 kg flour',[4000,400,60,90,50,80,2200,100,12],[],'Fat is written as "100 oil" on this column.'),
+  bread('bread3','3 kg flour',[3000,300,45,75,38,60,1600,120,8,'Butter / oil'],['Fat quantity 120 – page does not say butter or oil.']),
+  bread('bread37','3.7 kg flour (base column)',[3700,350,50,80,40,80,1900,150,10],[],'Left-hand base list on the Bread page.'),
+  bread2('bread-s500','500 g flour',[500,40,7.5,7.5,10,13,275,20,3]),
+  bread2('bread-s750','750 g flour',[750,60,11,11,15,19,400,30,3]),
+  bread2('bread-s3500','3500 g flour',[3500,320,47,35,60,78,1700,80,9],['Improver 35 and yeast 78 look overwritten on the page.']),
+  bread2('bread-s3200','3200 g flour',[3200,310,46,38,60,76,1650,60,8]),
+  R('garlic-bread','Garlic bread dough','Bread & Buns',[['Flour',1000,G],['Sugar',60,G],['Salt',20,G],['Yeast',20,G],['Improver',5,G],['Garlic',20,G],['Water',500,ML]]),
+  R('bread-stick','Bread stick','Bread & Buns',[['Flour',1000,G],['Salt',15,G],['Butter',100,G],['Water',500,ML]],'','Yeast and sugar lines are crossed out on the page.',['Yeast and sugar are crossed out – confirm whether bread sticks use them.']),
+  R('croissant','Croissant','Bread & Buns',[['Flour',1000,G],['Yeast',25,G],['Sugar',60,G],['Salt',7,G],['Gluten',200,G],['Improver',3,G],['Butter (in dough)',60,G],['Water',450,ML],['Milk powder',60,G],['Vanilla',20,G],['Eggs',4,PC],['Butter (for folding)',500,G]],'','Water is written 450–500. A second column of numbers is written beside the first: yeast 20, sugar 100, salt 15, gluten 25, improver 15, butter 100.',['Gluten 200 g looks too high for 1 kg flour (second column says 25).','Two columns of numbers on the page – confirm which is current.']),
+  R('korean-bun','Korean cheese bun','Bread & Buns',[['Hot bun or round bun',0,F],['Cream cheese (equal quantity)',0,F],['Liquid cheese (equal quantity)',0,F],['Sugar powder',0,F]],'Fill/spread equal quantities of cream cheese and liquid cheese; add a little sugar powder.','',['Exact quantities are not written.']),
+
+  R('egg-sponge','Egg sponge','Sponge & Cakes',[['Eggs',30,PC],['Sugar',650,G],['Maida (flour)',800,G],['Baking powder',30,G],['Vanilla essence',0,F]]),
+  R('black-sponge','Black (chocolate) sponge','Sponge & Cakes',[['Eggs',30,PC],['Sugar',650,G],['Flour',750,G],['Cocoa powder',75,G],['Baking powder',30,G],['Vanilla essence',0,F]]),
+  R('eggless-sponge-1lb','Eggless sponge – 1 pound','Sponge & Cakes',[['Flour',100,G],['Oil',45,ML],['Powdered sugar',75,G],['Warm milk',125,ML],['Baking powder',6,G],['Baking soda',2,G],['Salt',1,'pinch'],['Vinegar',1,'tbsp'],['Vanilla essence',0,F]],'','1 pound ≈ 350 g cake. For 2 pound use scale ×2 (page: flour 200, oil 90, sugar 150, milk 250, BP 12, BS 4, vinegar 2 tbsp). For 5 pound use ×5 (500 / 225 / 375 / 625 / 30 / 10 / 5 pinch / 5 tbsp).',['Page also has red notes "(18 pcs)", "(50)", "(20)", "(25)" next to the 2 pound list – unclear what they mean.']),
+  R('eggless-sponge-small','Eggless sponge (milk method)','Sponge & Cakes',[['Milk',200,ML],['Milk powder',1,'tbsp'],['Oil',65,ML],['Sugar',100,G],['Vinegar',1,'tbsp'],['Vanilla essence',0,F],['Flour',150,G],['Baking powder',0.5,'tbsp'],['Baking soda',0.5,'tbsp'],['Salt',0,F]],'Mix milk, milk powder, oil, sugar and vinegar first until the sugar dissolves. Then add the dry ingredients.'),
+  R('opera-sponge','Opera sponge','Sponge & Cakes',[['Eggs',1000,G],['Powdered sugar',750,G],['Ground almond',550,G],['Flour',300,G],['Egg white',650,G],['Breakfast sugar',100,G],['Melted butter',150,G],['Corn flour',100,G]]),
+  R('tea-cake','Tea cake','Sponge & Cakes',[['Butter',1000,G],['Icing sugar',1000,G],['Eggs',20,PC],['Flour',1200,G],['Baking powder',0,F]],'','A "Short cake" note under it is incomplete (cinnamon powder, liquid milk).',['Baking powder quantity is not written.','Flour is hard to read (1200?).']),
+  R('carrot-cake','Carrot cake','Sponge & Cakes',[['Flour',250,G],['Baking powder',10,G],['Baking soda',5,G],['Cinnamon powder',2,G],['Vegetable oil',230,G],['Curd',115,ML],['Vanilla essence',10,ML],['Eggs',4,PC],['Sugar',460,G],['Carrot',450,G]],'','Baking powder written as 2 tsp (10 g). "Orange and" is crossed out in the title.'),
+  R('mud-cake','Mud cake','Sponge & Cakes',[['Water',250,ML],['Butter',1800,G],['Sugar',2500,G],['Eggs',22,PC],['Dark chocolate',1150,G],['Flour',1920,G],['Baking soda',90,G],['Cocoa powder',225,G]],'','Large batch.',['Butter and sugar amounts are hard to read (1800 g? 2500 g?).']),
+  R('apple-walnut','Apple walnut spice cake','Sponge & Cakes',[['Icing sugar',275,G],['Butter',310,G],['Ground walnut',100,G],['Eggs',3,PC],['Flour',230,G],['Baking powder',5,G],['Salt',1,'pinch'],['Fresh cream',180,G],['Apple (chopped)',180,G],['Mixed spices',5,G],['Milk',100,G]]),
+  R('banana-eggless','Banana cake (eggless)','Sponge & Cakes',[['Banana',3,PC],['Flour',180,G],['Salt',0,F],['Baking powder',1,'tbsp'],['Baking soda',0.25,'tbsp'],['Oil',75,G],['Curd',60,G],['Vanilla essence',0,F],['Milk',80,ML],['Chocolate',35,G],['Dry nuts',15,G],['Sugar',150,G]],'Mash 3 bananas. Add dry flour + salt + baking powder + baking soda. Add oil + curd + sugar from the mixer, then milk + chocolate + dry nuts (nuts can be skipped). Bake at 180°C.','',['Baking powder / soda amounts are hard to read.']),
+  R('walnut-dry-cake','Walnut dry cake (eggless)','Sponge & Cakes',[['Flour',140,G],['Baking powder',0.5,'tbsp'],['Baking soda',0.5,'tbsp'],['Butter',120,G],['Sugar',0,F],['Condensed milk',200,G],['Vanilla essence',0,F],['Milk',100,G],['Walnut',100,G],['Walnut (add at last)',20,G]],'First mix butter + condensed milk + vanilla essence. Add the dry mixture in three parts with the milk. Fold in the walnut.','',['Sugar quantity is not written.']),
+  R('eggless-brownie','Eggless brownie (with plating)','Sponge & Cakes',[['Flour',300,G],['Milk',350,ML],['Butter',150,G],['Sugar',150,G],['Chocolate',150,G],['Baking powder',9,G],['Walnut',100,G]],'Cook milk + sugar + butter on the gas until melted. Add chocolate and cook until melted. Rest until cool, then add the dry ingredients and bake in a tray.\n\nPlating: brownie + vanilla ice cream + beetroot caviar.\n\nBeetroot caviar (garnish): cut beetroot, add water, blend and strain the juice. Add 30 ml oil and 30 ml sugar powder and cook in a pan until hot. Keep some oil in the freezer until chilled. Drop the hot beetroot juice into the chilled oil in small drops, strain the oil, and use the caviar for garnishing.','',['"250 ml" is written beside the flour – may be an alternative milk amount.']),
+  R('brownie','Brownie (egg)','Sponge & Cakes',[['Eggs',2,PC],['Sugar',100,G],['Vanilla',0,F],['Butter',50,G],['Cocoa powder',25,G],['Flour',50,G],['Baking powder',3,G],['Salt',2,G],['Chocolate chips',0,F]],'Oven 180°C / 170°C, about 20 min.','Red numbers on the page look like a double batch: sugar 200, butter 100, cocoa 50, flour 100, baking 6, salt 4 – use scale ×2.',['Oven temperature is written two ways (180° / 170°).']),
+  R('egg-slice-cake','Egg slice cake','Sponge & Cakes',[['Flour',0,F],['Sugar',0,F],['Eggs',0,F],['Puff margarine',1000,G]],'','Page is incomplete.',['Only partly written – please give the full recipe.']),
+
+  R('butter-muffin','Butter muffin','Muffins',[['Butter',1000,G],['Sugar',1000,G],['Eggs',15,PC],['Flour',1200,G],['Baking powder',30,G],['Nuts',0,F],['Tutti frutti',0,F]],'','Page also lists "Nuts, tutti-frutti" with no quantity.'),
+  R('egg-muffin','Egg muffin','Muffins',[['Eggs',4,PC],['Sugar',200,G],['Milk',250,ML],['Oil',65,ML],['Baking powder',10,G],['Salt',5,G],['Flour',300,G]],'','Half batch written on the page: 2 eggs, sugar 100, milk 125, oil 32.5, BP 5, salt 2.5, flour 150 – use scale ×0.5.'),
+  R('eggless-muffin-a','Eggless muffin (version 1)','Muffins',[['Oil',45,ML],['Sugar',75,G],['Warm milk',125,ML],['Flour',100,G],['Baking powder',6,G],['Baking soda',2,G],['Salt',1,'pinch'],['Vanilla essence',0,F],['Lemon juice',1,'tbsp']],'','A crossed-out older version with curd is on the same page.'),
+  R('eggless-muffin-b','Eggless muffin (version 2)','Muffins',[['Flour',200,G],['Sugar',80,G],['Baking soda',0.5,'tbsp'],['Baking powder',1,'tbsp'],['Milk',150,ML],['Lemon juice',0,F],['Oil',37,ML],['Butter',37,ML],['Vanilla essence',0,F],['Chocolate chips',0,F]],'Mix, add chocolate chips. For colour use a little chocolate syrup.'),
+  R('eggless-muffin-c','Eggless muffin (version 3, incomplete)','Muffins',[['Flour',60,G],['Cornflour / milk powder',0,F],['Sugar',0,F]],'','Page is incomplete.',['Only flour 60 g is clear – please give the full recipe.']),
+  R('chocolava','Chocolava (3 egg)','Muffins',[['Eggs',3,PC],['Sugar',75,G],['Oil',125,G],['Chocolate',125,G],['Flour',63,G],['Calcium (as written)',2,G]],'','6-egg version = scale ×2 (eggs 6, sugar 150, oil 250, chocolate 250, flour 125).',['"Calcium 2 g" is written here – confirm what this is.']),
+
+  R('choc-chip-cookies','Chocolate chip & oats cookies','Cookies & Biscuits',[['Butter',480,G],['Brown sugar',320,G],['Eggs',200,G],['Flour',500,G],['Oats',500,G],['Baking soda',10,G],['Baking powder',10,G],['Dark chocolate',200,G],['Peanut (chopped)',300,G]]),
+  R('choc-cookies','Chocolate cookies','Cookies & Biscuits',[['Butter',1000,G],['Icing sugar',500,G],['Flour',1500,G],['Eggs',4,PC],['Cocoa powder',200,G],['Dark chocolate',200,G]]),
+  R('oats-cookies','Oats cookies (banana)','Cookies & Biscuits',[['Butter',220,G],['Flour',120,G],['Sugar',120,G],['Oats',340,G],['Baking powder',1,'tsp'],['Banana',2,PC],['Cinnamon powder',0,F],['Vanilla essence',0,F],['Salt',0,F]],'Mix butter and sugar. Add banana and mix. Add flour + oats + baking powder + salt + vanilla essence + cinnamon powder and mix.','',['Banana "2 pcs" has a mark next to it – confirm.']),
+  R('coconut-cookies','Coconut cookies','Cookies & Biscuits',[['Eggs',10,PC],['Sugar',183,G],['Flour',186,G],['Coconut powder',367,G],['Margarine',100,G]]),
+  R('biscotti','Biscotti','Cookies & Biscuits',[['Eggs',24,PC],['Egg yolk',10,PC],['Granulated sugar',1850,G],['Flour',2800,G],['Salt',50,G],['Baking powder',50,G],['Almond (chopped)',600,G],['Pista',300,G],['Pista Peshawari',100,G]],'','',['Egg yolk looks like 10 (or 70) – confirm.','"Baking" assumed to be baking powder.']),
+  R('macaroon','Macaroon','Cookies & Biscuits',[['Almond powder',275,G],['Icing sugar',275,G],['Egg white (almond mix)',90,G],['Egg white (meringue)',90,G],['Caster sugar',125,G],['Water (sugar syrup)',125,G]],'Almond powder + icing sugar + 90 g egg white make the almond mix. The other 90 g egg white is whipped with caster sugar and the sugar syrup (water + sugar) into the meringue.'),
+
+  R('choc-pudding','Chocolate pudding','Desserts',[['Eggs',30,PC],['Sugar',1000,G],['Butter',1000,G],['Flour',450,G],['Chocolate',1000,G]],'','',['Eggs could be 30 or 80 – confirm.']),
+  R('tiramisu','Tiramisu','Desserts',[['Mascarpone cheese',1000,G],['Sugar',210,G],['Egg yolk',6,PC],['Egg white',6,PC],['Espresso',0,F],['Lady finger',0,F]],'','',['Sugar could be 210 or 240; lady finger quantity not written.']),
+  R('mousse','Classical mousse','Desserts',[['Egg white',300,G],['Sugar',100,G],['Cointreau',100,G],['Ganache (chocolate)',1000,G]]),
+  R('ny-cheesecake','New York cheesecake','Desserts',[['Biscuit (base)',120,G],['Melted butter (base)',60,G],['Cream cheese',400,G],['Breakfast sugar',120,G],['Sour cream',200,G],['Heavy cream',150,ML],['Eggs',2,PC],['Corn flour',2,'tbsp'],['Vanilla essence',1.5,'tsp'],['Lemon',1,PC]],'Bake in a water bath (double boiling) at 180°C for 30 min. Reduce the oven to 150°C and bake 30 min more. Turn off the oven and leave the cheesecake inside for 1 hour. Let it cool, then refrigerate for 6 hours.','',['Cream cheese looks like 400 g; vanilla unit unclear (tsp?).']),
+
+  R('dark-truffle','Dark truffle filling','Fillings, Sauces & Glazes',[['Dark chocolate',2000,G],['Cooking cream',800,G],['Cream (unclear name)',200,G],['Glucose',200,G]],'','',['One cream name is unreadable.']),
+  R('white-truffle','White truffle filling','Fillings, Sauces & Glazes',[['White chocolate',3000,G],['Cream',1200,G],['Sponge',400,G],['Glucose',400,G]]),
+  R('ganache','Chocolate ganache','Fillings, Sauces & Glazes',[['Chocolate',500,G],['Milk',250,G]],'Cook on a low flame.','500 g chocolate and 250 g milk (the larger first numbers are crossed out on the page).'),
+  R('choc-sauce','Chocolate sauce','Fillings, Sauces & Glazes',[['Milk',0.5,'cup'],['Sugar',6,'tbsp'],['Cocoa powder',4,'tbsp'],['Flour',1,'tbsp'],['Butter',1,'tbsp']]),
+  R('custard-sauce','Custard sauce','Fillings, Sauces & Glazes',[['Milk',1000,ML],['Sugar',200,G],['Custard powder',120,G]]),
+  R('white-glaze','White chocolate glaze','Fillings, Sauces & Glazes',[['Condensed milk',200,G],['Brown sugar',300,G],['Water',150,G],['Gelatin',20,G],['White chocolate',350,G]]),
+  R('apple-jam','Apple jam','Fillings, Sauces & Glazes',[['Apple',4000,G],['Sugar',3000,G],['Water',3000,ML],['Spice / flavour',100,G],['Liquid glucose',150,G]],'','',['The "spice / flavour" line is partly crossed out.'])
+  ];
+})();
+function autoIng(name){
+  const n = String(name).toLowerCase();
+  if(/egg (white|yolk)|^egg yolk/.test(n)) return '';
+  if(/condensed|sour|cream cheese|mascarpone|lemon|coconut|cornflour|milk powder|almond|custard|ground|walnut/.test(n)) return '';
+  if(/^(flour|maida)/.test(n)) return 'i-flour';
+  if(/icing sugar|powdered sugar|sugar powder/.test(n)) return 'i-icing';
+  if(/sugar/.test(n) && !/syrup/.test(n)) return 'i-sugar';
+  if(/^(melted )?butter/.test(n) && !/oil\)?$/.test(n) && !/ \/ /.test(n)) return 'i-butter';
+  if(/^(vegetable )?oil|^oil/.test(n)) return 'i-oil';
+  if(/^eggs?$/.test(n)) return 'i-eggs';
+  if(/^(warm )?milk$/.test(n)) return 'i-milk';
+  if(/(heavy|fresh|cooking|whipping)?\s*cream$/.test(n) && !/ice|sour/.test(n)) return 'i-cream';
+  if(/cocoa/.test(n)) return 'i-cocoa';
+  if(/dark chocolate|^chocolate$/.test(n)) return 'i-darkchoc';
+  if(/white chocolate/.test(n)) return 'i-whitechoc';
+  if(/baking powder/.test(n)) return 'i-bpowder';
+  if(/baking soda/.test(n)) return 'i-bsoda';
+  if(/^vanilla/.test(n)) return 'i-vanilla';
+  if(/^yeast/.test(n)) return 'i-yeast';
+  return '';
+}
+function recipeSeedList(){ return RECIPE_SEED.map(r=>({...r, ings:r.ings.map(x=>({...x, ing:autoIng(x.n)}))})); }
+async function seedRecipes(){
+  try{
+    toast('Loading your recipes… please wait');
+    const have = new Set(S.recipes.map(r=>r.id)); let n = 0;
+    for(const r of recipeSeedList()) if(!have.has(r.id)){ await put('recipes', r); n++; }
+    toast(n+' recipes added ✓ Open any recipe to scale it and check stock.');
+  }catch(e){}
+}
+/* convert a recipe quantity into the stock unit of the linked ingredient (null = cannot convert) */
+function toInv(q, u, iu){
+  q = num(q); iu = String(iu||'').toLowerCase();
+  if(u==='g')  return iu==='kg' ? q/1000 : iu==='g' ? q : iu==='l' ? q/1000 : iu==='ml' ? q : null;
+  if(u==='ml') return iu==='l' ? q/1000 : iu==='ml' ? q : iu==='kg' ? q/1000 : iu==='g' ? q : null;
+  if(u==='pc') return (iu==='piece'||iu==='pcs'||iu==='pc') ? q : null;
+  return null;
+}
+function qtyText(q,u,m){
+  if(u==='few' || !num(q)) return '<span class="hint">as needed</span>';
+  let v = num(q)*m;
+  if(u==='g' && v>=1000) return fmtQ(v/1000)+' kg';
+  if(u==='ml' && v>=1000) return fmtQ(v/1000)+' L';
+  return fmtQ(v)+' '+(u==='pc'?(Math.round(v*100)/100===1?'piece':'pieces'):u);
+}
+function recipeCalc(r, m){
+  let cost = 0, linked = 0, short = [];
+  const rows = r.ings.map(x=>{
+    const ing = x.ing ? ingById(x.ing) : null; let st = '';
+    if(ing){
+      const need = toInv(num(x.q)*m, x.u, ing.unit);
+      if(need!=null && num(x.q)>0){ linked++; cost += need*num(ing.cost); st = num(ing.stock) >= need ? 'ok' : 'short'; if(st==='short') short.push({ing, need}); }
+    }
+    return {x, ing, st};
+  });
+  return {rows, cost, linked, short};
+}
+let RM = {id:null, m:1};
+function recipeModal(r, m){
+  RM = {id:r.id, m:m||1};
+  const c = recipeCalc(r, RM.m);
+  const scales = [0.5,1,2,3,5];
+  openModal('<h2>'+esc(r.name)+'</h2><div class="hint" style="margin:-6px 0 10px">'+esc(r.cat||'')+'</div>'+
+    (r.check&&r.check.length?'<div class="banner" style="margin:0 0 10px">⚠ <b>Please check:</b> '+r.check.map(esc).join(' · ')+'</div>':'')+
+    '<div class="row" style="gap:6px;flex-wrap:wrap;margin-bottom:10px"><b style="font-size:13px">Make:</b>'+scales.map(s=>'<button class="btn sm'+(s===RM.m?' pri':'')+'" data-rscale="'+s+'">×'+s+'</button>').join('')+
+    '<input class="in" id="rscaleIn" type="number" step="any" min="0.1" style="width:120px" placeholder="custom ×" value="'+(scales.includes(RM.m)?'':RM.m)+'"></div>'+
+    '<div class="tw"><table class="tbl"><thead><tr><th>Ingredient</th><th class="num">Quantity</th><th>Stock</th></tr></thead><tbody>'+
+    c.rows.map(({x,ing,st})=>'<tr><td>'+esc(x.n)+'</td><td class="num"><b>'+qtyText(x.q,x.u,RM.m)+'</b></td><td class="hint">'+(st==='ok'?'<span class="inc">✓ enough</span>':st==='short'?'<span class="late">⚠ only '+fmtQ(ing.stock)+' '+esc(ing.unit)+'</span>':ing?'<span class="hint">linked</span>':'—')+'</td></tr>').join('')+'</tbody></table></div>'+
+    (c.linked?'<p class="hint" style="margin:10px 0 0">Ingredient cost ≈ <b>'+fmt(Math.round(c.cost))+'</b> for this batch ('+c.linked+' of '+r.ings.length+' items have a stock link and price).'+(c.short.length?' <span class="late">Short: '+c.short.map(s=>esc(s.ing.name)).join(', ')+'.</span>':' All linked items are in stock.')+'</p>':'')+
+    (r.method?'<h3 style="margin:14px 0 4px;font-size:15px">Method</h3><div style="white-space:pre-line;font-size:14px">'+esc(r.method)+'</div>':'')+
+    (r.note?'<p class="hint" style="margin:12px 0 0">📝 '+esc(r.note)+'</p>':'')+
+    '<div class="ft"><button class="btn" data-act="editRecipe" data-id="'+r.id+'">'+I.edit+'Edit</button><span class="sp"></span>'+(c.linked?'<button class="btn" data-act="bakeRecipe" data-id="'+r.id+'">🍞 I baked this – deduct stock</button>':'')+'<button class="btn pri" data-close="1">Close</button></div>');
+}
+function vRecipes(){
+  let h = pageTop('Recipe Book', '<button class="btn pri" data-act="newRecipe">'+I.plus+'Add recipe</button>');
+  if(!S.recipes.length) return h + '<div class="card">'+emptyBox('Your handwritten recipes, typed up clearly: '+RECIPE_SEED.length+' recipes from your notebook pages. Tap below to load them. You can edit, scale and link each ingredient to your stock.')+'<div style="text-align:center"><button class="btn pri" data-act="seedRecipes">Load my '+RECIPE_SEED.length+' recipes</button></div></div>';
+  const q = (S.recSearch||'').trim().toLowerCase(), cat = S.recCat||'all';
+  const cats = [...new Set([...RCATS, ...S.recipes.map(r=>r.cat||'Other')])].filter(c=>S.recipes.some(r=>(r.cat||'Other')===c));
+  const missing = RECIPE_SEED.filter(r=>!S.recipes.some(x=>x.id===r.id)).length;
+  const flagged = S.recipes.filter(r=>(r.check||[]).length).length;
+  h += (flagged?'<div class="banner">⚠ <b>'+flagged+' recipes</b> have a note where the handwriting was unclear. Open them, check the numbers, and tap Edit to correct.</div>':'')+(missing?'<div class="banner">'+missing+' recipes from the notebook are not loaded yet. <button class="btn sm" data-act="seedRecipes">Load them</button></div>':'');
+  h += '<div class="row sec" style="margin-bottom:12px;flex-wrap:wrap"><div class="tabs" style="margin:0;flex-wrap:wrap"><button class="tab'+(cat==='all'?' on':'')+'" data-rcat="all">All<span class="c">'+S.recipes.length+'</span></button>'+cats.map(c=>'<button class="tab'+(cat===c?' on':'')+'" data-rcat="'+esc(c)+'">'+esc(c)+'<span class="c">'+S.recipes.filter(r=>(r.cat||'Other')===c).length+'</span></button>').join('')+'</div><span class="sp"></span><input class="in search" id="recSearch" placeholder="Search recipe or ingredient…" value="'+esc(S.recSearch||'')+'"></div>';
+  const list = S.recipes.filter(r=>(cat==='all'||(r.cat||'Other')===cat) && (!q || r.name.toLowerCase().includes(q) || r.ings.some(x=>String(x.n).toLowerCase().includes(q)))).sort((a,b)=>a.name.localeCompare(b.name));
+  if(!list.length) return h + '<div class="card">'+emptyBox('No recipe matches.')+'</div>';
+  const groups = {}; list.forEach(r=>{ (groups[r.cat||'Other'] ||= []).push(r); });
+  Object.keys(groups).sort((a,b)=>cats.indexOf(a)-cats.indexOf(b)).forEach(c=>{
+    h += '<h2 class="sec" style="font-size:19px">'+esc(c)+'</h2><div class="mgrid">'+groups[c].map(r=>{
+      const cc = recipeCalc(r,1);
+      return '<div class="card" style="cursor:pointer;padding:14px" data-act="openRecipe" data-id="'+r.id+'"><b>'+esc(r.name)+'</b><div class="hint" style="margin-top:4px">'+r.ings.length+' ingredients'+(cc.short.length?' · <span class="late">short on stock</span>':'')+'</div>'+((r.check||[]).length?'<div class="tags" style="margin-top:6px"><span class="tg bad">⚠ check</span></div>':'')+'</div>';
+    }).join('')+'</div>';
+  });
+  return h;
+}
+function recipeForm(r){
+  const isNew = !r; r = r || {id:uid(), name:'', cat:'Sponge & Cakes', ings:[{n:'',q:'',u:'g',ing:''}], method:'', note:'', check:[]};
+  const opts = sel => '<option value="">no stock link</option>'+S.ingredients.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(i=>'<option value="'+i.id+'"'+(i.id===sel?' selected':'')+'>'+esc(i.name)+' ('+esc(i.unit)+')</option>').join('');
+  const row = x => '<div class="rrow" style="display:grid;grid-template-columns:1fr 70px 72px;gap:6px;margin-bottom:2px"><input class="in" name="rn" placeholder="Ingredient" value="'+esc(x.n)+'"><input class="in" name="rq" type="number" step="any" min="0" placeholder="Qty" value="'+(num(x.q)?esc(x.q):'')+'"><select class="in" name="ru">'+['g','ml','pc','tbsp','tsp','cup','pinch','few'].map(u=>'<option'+(u===x.u?' selected':'')+'>'+u+'</option>').join('')+'</select></div><div style="display:flex;gap:6px;margin-bottom:8px"><select class="in" name="ri" style="flex:1;font-size:12px">'+opts(x.ing)+'</select><button type="button" class="btn sm ghost" data-rrem="1">'+I.trash+'</button></div>';
+  openModal('<h2>'+(isNew?'Add recipe':'Edit recipe')+'</h2><form id="rcf"><div class="fg">'+
+    '<label class="f full">Recipe name *<input class="in" name="name" required value="'+esc(r.name)+'"></label>'+
+    '<label class="f full">Category<input class="in" name="cat" list="rcats" value="'+esc(r.cat||'')+'"></label><datalist id="rcats">'+RCATS.map(c=>'<option value="'+esc(c)+'">').join('')+'</datalist></div>'+
+    '<h3 style="margin:12px 0 6px;font-size:15px">Ingredients <span class="hint" style="font-weight:400">(link to stock so the app can check and deduct)</span></h3><div id="rrows">'+r.ings.map(row).join('')+'</div><button type="button" class="btn sm" id="addRow">'+I.plus+'Add ingredient</button>'+
+    '<div class="fg" style="margin-top:10px"><label class="f full">Method<textarea class="in" name="method" rows="4">'+esc(r.method||'')+'</textarea></label><label class="f full">Notes<textarea class="in" name="note" rows="2">'+esc(r.note||'')+'</textarea></label>'+((r.check||[]).length?'<label class="chk full"><input type="checkbox" name="clear"> I have checked the numbers – remove the ⚠ warning</label>':'')+'</div>'+
+    '<div class="ft">'+(!isNew?'<button type="button" class="btn danger" id="delRc">'+I.trash+'Delete</button><span class="sp"></span>':'')+'<button type="button" class="btn" data-close="1">Cancel</button><button class="btn pri" type="submit">Save</button></div></form>');
+  $('#addRow').onclick = ()=>{ $('#rrows').insertAdjacentHTML('beforeend', row({n:'',q:'',u:'g',ing:''})); };
+  $('#rcf').addEventListener('click', e=>{ const b = e.target.closest('[data-rrem]'); if(b){ const sel = b.parentElement, top = sel.previousElementSibling; if(top && top.classList.contains('rrow')) top.remove(); sel.remove(); } });
+  if(!isNew) $('#delRc').onclick = ()=> confirmBox('Delete recipe <b>'+esc(r.name)+'</b>?', 'Delete', async ()=>{ try{ await del('recipes', r.id); }catch(e){} });
+  $('#rcf').onsubmit = async ev => { ev.preventDefault(); const fd = new FormData(ev.target);
+    const ns = fd.getAll('rn'), qs = fd.getAll('rq'), us = fd.getAll('ru'), is = fd.getAll('ri');
+    const ings = ns.map((n,i)=>({n:n.trim(), q:num(qs[i]), u:us[i], ing:is[i]||''})).filter(x=>x.n);
+    if(!ings.length){ toast('Add at least one ingredient'); return; }
+    try{ await put('recipes', {...r, name:fd.get('name').trim(), cat:(fd.get('cat')||'').trim()||'Other', ings, method:fd.get('method')||'', note:fd.get('note')||'', check: fd.get('clear') ? [] : (r.check||[])}); toast('Saved ✓'); closeModal(); }catch(e){}
+  };
+}
+async function bakeRecipe(r, m){
+  const c = recipeCalc(r, m); let n = 0;
+  try{
+    for(const {x,ing,st} of c.rows){ if(!ing || !st) continue; const need = toInv(num(x.q)*m, x.u, ing.unit); if(need>0){ await adjustStock(ing.id, -Math.round(need*1000)/1000, 'use', 'Recipe: '+r.name+' ×'+m); n++; } }
+    toast('Stock deducted for '+n+' ingredients ✓'); closeModal();
+  }catch(e){}
+}
+
 /* ============ Events ============ */
 document.addEventListener('click', async e => {
   const t = e.target;
   if(t.closest('[data-close]') && (t.dataset.close || t.closest('button[data-close]'))){ if(t.classList.contains('ov') || t.closest('button[data-close]')){ closeModal(); return; } }
   const g = t.closest('[data-go]'); if(g){ go(g.dataset.go); return; }
   const nt = t.closest('[data-newtab]'); if(nt){ S.orderTab='New'; go('orders'); return; }
+  const rs = t.closest('[data-rscale]'); if(rs){ const r = S.recipes.find(x=>x.id===RM.id); if(r) recipeModal(r, parseFloat(rs.dataset.rscale)); return; }
+  const rc = t.closest('[data-rcat]'); if(rc){ S.recCat = rc.dataset.rcat; render(); return; }
   const it = t.closest('[data-itab]'); if(it){ S.invTab = it.dataset.itab; render(); return; }
   const ot = t.closest('[data-otab]'); if(ot){ S.orderTab = ot.dataset.otab; render(); return; }
   const tf = t.closest('[data-tfilter]'); if(tf){ S.txnFilter = tf.dataset.tfilter; render(); return; }
@@ -1353,6 +1540,11 @@ document.addEventListener('click', async e => {
     case 'newProduct': productForm(); break;
     case 'seedAll': seedAll(); break;
     case 'newIng': ingForm(); break;
+    case 'seedRecipes': await seedRecipes(); break;
+    case 'newRecipe': recipeForm(); break;
+    case 'openRecipe': { const r = S.recipes.find(x=>x.id===id); if(r) recipeModal(r,1); break; }
+    case 'editRecipe': { const r = S.recipes.find(x=>x.id===id); if(r) recipeForm(r); break; }
+    case 'bakeRecipe': { const r = S.recipes.find(x=>x.id===id); if(r) confirmBox('Deduct the stock for <b>'+esc(r.name)+' ×'+RM.m+'</b> from your inventory?', 'Deduct', ()=>bakeRecipe(r, RM.m)); break; }
     case 'editIng': { const g = ingById(id); if(g) ingForm(g); break; }
     case 'stockIn': { const g = ingById(id); if(g) stockModal(g,'in'); break; }
     case 'stockOut': { const g = ingById(id); if(g) stockModal(g,'out'); break; }
@@ -1389,7 +1581,7 @@ document.addEventListener('click', async e => {
       let j = null; try{ j = JSON.parse(localStorage.getItem(LS_KEY)||'null'); }catch(err){}
       if(!j || !((j.orders||[]).length||(j.txns||[]).length||(j.products||[]).length)){ toast('No older data on this phone to upload.'); break; }
       toast('Uploading…'); let n = 0;
-      try{ for(const k of ['products','ingredients','extras','customers','orders','txns','reminders','stockLog']){ for(const r of (j[k]||[])){ if(r && r.id){ await put(k, {...r}); n++; } } } toast('Uploaded '+n+' records to the cloud ✓'); }
+      try{ for(const k of ['products','ingredients','extras','recipes','customers','orders','txns','reminders','stockLog']){ for(const r of (j[k]||[])){ if(r && r.id){ await put(k, {...r}); n++; } } } toast('Uploaded '+n+' records to the cloud ✓'); }
       catch(err){ toast('Upload stopped — try again with internet.'); }
       break; }
     case 'resetTpl': confirmBox('Reset all WhatsApp templates to default?', 'Reset', async ()=>{ try{ await putConfig({tplReady:DEFAULT_CONFIG.tplReady,tplConfirm:DEFAULT_CONFIG.tplConfirm,tplThanks:DEFAULT_CONFIG.tplThanks,tplReminder:DEFAULT_CONFIG.tplReminder,tplBirthday:DEFAULT_CONFIG.tplBirthday,tplAnniv:DEFAULT_CONFIG.tplAnniv,tplOnlineAccept:DEFAULT_CONFIG.tplOnlineAccept,tplDecline:DEFAULT_CONFIG.tplDecline}); toast('Templates reset'); }catch(e){} }); break;
@@ -1398,6 +1590,8 @@ document.addEventListener('click', async e => {
 document.addEventListener('input', e => {
   if(e.target.id==='orderSearch'){ S.orderSearch = e.target.value; render(); }
   if(e.target.id==='txnSearch'){ S.txnSearch = e.target.value; render(); }
+  if(e.target.id==='recSearch'){ S.recSearch = e.target.value; render(); }
+  if(e.target.id==='rscaleIn'){ const v = parseFloat(e.target.value); const r = S.recipes.find(x=>x.id===RM.id); if(r && v>0){ clearTimeout(window._rsT); window._rsT = setTimeout(()=>{ recipeModal(r, v); const el = $('#rscaleIn'); if(el){ el.focus(); el.setSelectionRange(el.value.length, el.value.length); } }, 500); } }
   if(e.target.id==='invSearch'){ S.invSearch = e.target.value; render(); }
 });
 document.addEventListener('change', e => {
